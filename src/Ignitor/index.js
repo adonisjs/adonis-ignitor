@@ -341,8 +341,8 @@ class Ignitor {
     if (customHttpInstance) {
       Server.setInstance(customHttpInstance)
     }
-    Server.listen(Env.get('host'), Env.get('port'))
 
+    Server.listen(Env.get('HOST'), Env.get('PORT'))
     this._callHooks('after', 'httpServer')
   }
 
