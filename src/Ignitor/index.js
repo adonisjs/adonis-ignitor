@@ -331,8 +331,8 @@ class Ignitor {
   _startHttpServer (customHttpInstance) {
     this._callHooks('before', 'httpServer')
 
-    const Server = this._fold.use('Adonis/Src/Server')
-    const Env = this._fold.use('Adonis/Src/Env')
+    const Server = this._fold.ioc.use('Adonis/Src/Server')
+    const Env = this._fold.ioc.use('Adonis/Src/Env')
 
     /**
      * If a custom http instance is defined, set it
