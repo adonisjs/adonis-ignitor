@@ -10,10 +10,15 @@
 */
 
 const path = require('path')
+const pify = require('pify')
 
 /**
  * This class returns absolute path to commonly
  * used AdonisJs directories.
+ *
+ * @namespace Adonis/Src/Helpers
+ * @alias Helpers
+ * @singleton
  *
  * @class Helpers
  * @constructor
@@ -21,6 +26,17 @@ const path = require('path')
 class Helpers {
   constructor (appRoot) {
     this._appRoot = appRoot
+  }
+
+  /**
+   * Returns path to the application root
+   *
+   * @method appRoot
+   *
+   * @return {String}
+   */
+  appRoot () {
+    return this._appRoot
   }
 
   /**
@@ -165,6 +181,20 @@ class Helpers {
    */
   tmpPath (toFile = '') {
     return path.join(this._appRoot, '/tmp', toFile)
+  }
+
+  /**
+   * Promisify callback style functions
+   *
+   * @method promisify
+   *
+   * @param  {Function} fn
+   * @param  {Object}   options
+   *
+   * @return {Promise}
+   */
+  promisify (fn, options) {
+    return pify(fn, options)
   }
 
   /**

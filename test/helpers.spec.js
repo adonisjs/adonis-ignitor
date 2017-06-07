@@ -10,6 +10,7 @@
 */
 
 const test = require('japa')
+const fs = require('fs')
 const path = require('path')
 
 const Helpers = require('../src/Helpers')
@@ -17,6 +18,10 @@ const Helpers = require('../src/Helpers')
 test.group('Helpers', (group) => {
   group.beforeEach(() => {
     this.helpers = new Helpers(path.join(__dirname, './'))
+  })
+
+  test('return path to app root', (assert) => {
+    assert.equal(this.helpers.appRoot(), path.join(__dirname, './'))
   })
 
   test('return path to public dir', (assert) => {
@@ -86,5 +91,10 @@ test.group('Helpers', (group) => {
 
   test('return path to a file inside tmp dir', (assert) => {
     assert.equal(this.helpers.tmpPath('logs.txt'), path.join(__dirname, './tmp/logs.txt'))
+  })
+
+  test('promisify a function', async (assert) => {
+    const packageFile = await this.helpers.promisify(fs.readFile)(path.join(__dirname, '../package.json'))
+    assert.equal(JSON.parse(packageFile).name, 'adonis-ignitor')
   })
 })
