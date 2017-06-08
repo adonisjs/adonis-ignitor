@@ -25,6 +25,7 @@ test.group('Ignitor', (group) => {
     fold.ioc._autoloads = {}
     fold.ioc._aliases = {}
     clearRequire(path.join(__dirname, 'start/app.js'))
+    clearRequire(path.join(__dirname, 'package.json'))
     fold.ioc.restore()
     fold.ioc.fake('Adonis/Src/Exception', () => {
       return { bind () {} }
@@ -296,7 +297,7 @@ test.group('Ignitor', (group) => {
     class Exception {
       bind (name, handler) {
         assert.equal(name, '*')
-        assert.equal(handler, '@provider:Adonis/Exception/Handler')
+        assert.equal(handler, '@provider:Adonis/Exceptions/Handler')
       }
     }
 
@@ -304,19 +305,22 @@ test.group('Ignitor', (group) => {
       return new Exception()
     })
 
+    ignitor._setPackageFile()
+    ignitor._setupResolver()
     ignitor._setupExceptionsHandler()
   })
 
   test('setup exception handler to global handler when defined', async (assert) => {
     const ignitor = new Ignitor(fold)
+
     ignitor.appRoot(path.join(__dirname, './'))
     assert.plan(2)
-    await fs.outputFile(path.join(__dirname, './app/Exceptions/Handlers/Default.js'), 'module.exports = {}')
+    await fs.outputFile(path.join(__dirname, './app/Exceptions/Handler.js'), 'module.exports = {}')
 
     class Exception {
       bind (name, handler) {
         assert.equal(name, '*')
-        assert.equal(handler, 'Default')
+        assert.equal(handler, 'App/Exceptions/Handler')
       }
     }
 
@@ -324,6 +328,8 @@ test.group('Ignitor', (group) => {
       return new Exception()
     })
 
+    ignitor._setPackageFile()
+    ignitor._setupResolver()
     ignitor._setupExceptionsHandler()
     await fs.remove(path.join(__dirname, './app'))
   })

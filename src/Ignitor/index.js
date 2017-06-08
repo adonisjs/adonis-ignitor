@@ -66,6 +66,14 @@ class Ignitor {
      * @type {String}
      */
     this._appFile = 'start/app.js'
+
+    /**
+     * The app namespace registered with resolver
+     * for autoloading directories
+     *
+     * @type {String|Null}
+     */
+    this.appNamespace = null
   }
 
   /**
@@ -129,18 +137,18 @@ class Ignitor {
   _setupResolver () {
     const autoload = this._packageFile.autoload || {}
     let [ namespace ] = Object.keys(autoload)
-    namespace = namespace || 'App'
+    this.appNamespace = namespace || 'App'
 
     /**
      * Set app namespace with resolver. So that resolver
      * knows how to make full namespaces.
      */
-    this._fold.resolver.appNamespace(namespace)
+    this._fold.resolver.appNamespace(this.appNamespace)
 
     /**
      * Setting up the autoloaded directory
      */
-    this._fold.ioc.autoload(autoload[namespace] || './app', namespace)
+    this._fold.ioc.autoload(autoload[this.appNamespace] || './app', this.appNamespace)
 
     /**
      * Bind directories to resolver, so that we can
@@ -166,14 +174,15 @@ class Ignitor {
    * @private
    */
   _setupExceptionsHandler () {
+    const handleRelativePath = `${DIRECTORIES['exceptions']}/Handler`
     try {
-      require(path.join(this._appRoot, 'app', DIRECTORIES['exceptionHandlers'], 'Default'))
-      this._fold.ioc.use('Adonis/Src/Exception').bind('*', 'Default')
+      require(path.join(this._appRoot, 'app', handleRelativePath))
+      this._fold.ioc.use('Adonis/Src/Exception').bind('*', `${this.appNamespace}/${handleRelativePath}`)
     } catch (error) {
       if (error.code !== 'MODULE_NOT_FOUND') {
         throw error
       }
-      this._fold.ioc.use('Adonis/Src/Exception').bind('*', '@provider:Adonis/Exception/Handler')
+      this._fold.ioc.use('Adonis/Src/Exception').bind('*', '@provider:Adonis/Exceptions/Handler')
     }
   }
 
