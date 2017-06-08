@@ -12,16 +12,23 @@
 const path = require('path')
 const test = require('japa')
 const clearRequire = require('clear-require')
+const { Env } = require('adonis-sink')
 const fold = require('adonis-fold')
 const hooks = require('../src/Hooks')
 const Ignitor = require('../src/Ignitor')
+const fs = require('fs-extra')
 
 test.group('Ignitor', (group) => {
   group.beforeEach(() => {
     hooks.before.clear()
     hooks.after.clear()
     fold.ioc._autoloads = {}
+    fold.ioc._aliases = {}
     clearRequire(path.join(__dirname, 'start/app.js'))
+    fold.ioc.restore()
+    fold.ioc.fake('Adonis/Src/Exception', () => {
+      return { bind () {} }
+    })
   })
 
   test('register app root', (assert) => {
@@ -69,6 +76,12 @@ test.group('Ignitor', (group) => {
     const ignitor = new Ignitor()
     ignitor.preLoadBefore('start/events', 'start/foo.js')
     assert.equal(ignitor._preLoadFiles[1], 'start/foo.js')
+  })
+
+  test('push to last when unable to find before file', (assert) => {
+    const ignitor = new Ignitor()
+    ignitor.preLoadBefore('start/non-existing', 'start/foo.js')
+    assert.equal(ignitor._preLoadFiles[ignitor._preLoadFiles.length - 1], 'start/foo.js')
   })
 
   test('throw exception when trying to fire without app root', async (assert) => {
@@ -188,7 +201,8 @@ test.group('Ignitor', (group) => {
     ignitor._preLoadFiles = []
     ignitor._startHttpServer = function () {}
     await ignitor.fireHttpServer()
-    assert.deepEqual(fold.ioc._aliases, appFile.aliases)
+    assert.property(fold.ioc._aliases, 'Route')
+    assert.property(fold.ioc._aliases, 'Server')
   })
 
   test('load files to be preloaded', async (assert) => {
@@ -272,5 +286,83 @@ test.group('Ignitor', (group) => {
     } catch ({ message }) {
       assert.equal(message, `Cannot find module 'Adonis/Src/Command'`)
     }
+  })
+
+  test('setup exception handler to adonis provider when there is no exceptions handler', (assert) => {
+    const ignitor = new Ignitor(fold)
+    ignitor.appRoot(path.join(__dirname, './'))
+    assert.plan(2)
+
+    class Exception {
+      bind (name, handler) {
+        assert.equal(name, '*')
+        assert.equal(handler, '@provider:Adonis/Exception/Handler')
+      }
+    }
+
+    fold.ioc.fake('Adonis/Src/Exception', function () {
+      return new Exception()
+    })
+
+    ignitor._setupExceptionsHandler()
+  })
+
+  test('setup exception handler to global handler when defined', async (assert) => {
+    const ignitor = new Ignitor(fold)
+    ignitor.appRoot(path.join(__dirname, './'))
+    assert.plan(2)
+    await fs.outputFile(path.join(__dirname, './app/Exceptions/Handlers/Default.js'), 'module.exports = {}')
+
+    class Exception {
+      bind (name, handler) {
+        assert.equal(name, '*')
+        assert.equal(handler, 'Default')
+      }
+    }
+
+    fold.ioc.fake('Adonis/Src/Exception', function () {
+      return new Exception()
+    })
+
+    ignitor._setupExceptionsHandler()
+    await fs.remove(path.join(__dirname, './app'))
+  })
+
+  test('register helpers module', async (assert) => {
+    const ignitor = new Ignitor(fold)
+    ignitor.appRoot(path.join(__dirname, './'))
+    await ignitor.fire()
+    assert.isDefined(fold.ioc.use('Adonis/Src/Helpers'))
+  })
+
+  test('define alias for helpers module', async (assert) => {
+    const ignitor = new Ignitor(fold)
+    ignitor.appRoot(path.join(__dirname, './'))
+    await ignitor.fire()
+    assert.isDefined(fold.ioc.use('Helpers'))
+  })
+
+  test('call httpServer hooks when starting http server', async (assert) => {
+    const ignitor = new Ignitor(fold)
+
+    class Server {
+      listen () {}
+    }
+
+    const events = []
+    hooks.before.httpServer(() => {
+      events.push('before:httpServer')
+    })
+
+    hooks.after.httpServer(() => {
+      events.push('after:httpServer')
+    })
+
+    fold.ioc.fake('Adonis/Src/Server', () => new Server())
+    fold.ioc.fake('Adonis/Src/Env', () => new Env())
+
+    ignitor.appRoot(path.join(__dirname, './'))
+    await ignitor.fireHttpServer()
+    assert.deepEqual(events, ['before:httpServer', 'after:httpServer'])
   })
 })

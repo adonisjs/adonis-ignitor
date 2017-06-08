@@ -151,6 +151,33 @@ class Ignitor {
   }
 
   /**
+   * This method sets the global exception handler for handling exceptions.
+   * By default it will rely on a global exceptions handler defined in
+   * `Exceptions/Handlers/Global.js` file, if not provided, fallsback
+   * to `@provider:Adonis/Exception/Handler`.
+   *
+   * Also this operation should happen before loading the kernel.js file.
+   * Since that file allows overriding the exceptions handler.
+   *
+   * @method _setupExceptionsHandler
+   *
+   * @return {void}
+   *
+   * @private
+   */
+  _setupExceptionsHandler () {
+    try {
+      require(path.join(this._appRoot, 'app', DIRECTORIES['exceptionHandlers'], 'Default'))
+      this._fold.ioc.use('Adonis/Src/Exception').bind('*', 'Default')
+    } catch (error) {
+      if (error.code !== 'MODULE_NOT_FOUND') {
+        throw error
+      }
+      this._fold.ioc.use('Adonis/Src/Exception').bind('*', '@provider:Adonis/Exception/Handler')
+    }
+  }
+
+  /**
    * Registers the helpers module to the IoC container.
    * Required by a lot of providers before hand.
    *
@@ -164,6 +191,7 @@ class Ignitor {
     this._fold.ioc.singleton('Adonis/Src/Helpers', () => {
       return new Helpers(this._appRoot)
     })
+    this._fold.ioc.alias('Adonis/Src/Helpers', 'Helpers')
   }
 
   /**
@@ -296,7 +324,7 @@ class Ignitor {
    */
   _loadHooksFileIfAny () {
     try {
-      require(path.join(this._appRoot, 'start/hooks.js'))
+      return require(path.join(this._appRoot, 'start/hooks.js'))
     } catch (error) {
       if (error.code !== 'MODULE_NOT_FOUND') {
         throw error
@@ -317,7 +345,7 @@ class Ignitor {
     this._callHooks('before', 'registerCommands')
 
     const { commands } = this._getAppAttributes()
-    const ace = require(path.join(this._appRoot), '/node_modules/adonis-ace')
+    const ace = require(path.join(this._appRoot, '/node_modules/adonis-ace'))
     ace.register(commands)
 
     this._callHooks('after', 'registerCommands')
@@ -489,6 +517,7 @@ class Ignitor {
     this._registerProviders()
     await this._bootProviders()
     this._defineAliases()
+    this._setupExceptionsHandler()
     this._loadPreLoadFiles()
 
     /**
@@ -521,7 +550,7 @@ class Ignitor {
   async fireAce () {
     this.loadCommands()
     await this.fire()
-    const ace = require(path.join(this._appRoot), '/node_modules/adonis-ace')
+    const ace = require(path.join(this._appRoot, '/node_modules/adonis-ace'))
     ace.invoke(this._packageFile)
   }
 }

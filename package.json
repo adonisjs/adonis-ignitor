@@ -7,9 +7,9 @@
     "lint": "standard",
     "pretest": "npm run lint",
     "posttest": "npm run coverage",
-    "test:local": "node --harmony-async-await ./node_modules/.bin/japa",
+    "test:local": "node ./node_modules/.bin/japa",
     "test": "./node_modules/.bin/nyc npm run test:local",
-    "test:win": "node --harmony-async-await ./node_modules/japa-cli/index.js",
+    "test:win": "node ./node_modules/japa-cli/index.js",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "keywords": [
@@ -21,17 +21,22 @@
   "license": "MIT",
   "devDependencies": {
     "adonis-fold": "git+https://github.com/poppinss/adonis-fold.git#dawn",
+    "adonis-sink": "git+https://github.com/adonisjs/adonis-sink.git",
     "clear-require": "^2.0.0",
     "coveralls": "^2.13.0",
     "cz-conventional-changelog": "^2.0.0",
+    "fs-extra": "^3.0.1",
     "japa": "^1.0.3",
     "japa-cli": "^1.0.1",
-    "nyc": "^10.2.0",
+    "nyc": "^11.0.2",
     "standard": "^10.0.2"
   },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "dependencies": {
+    "pify": "^3.0.0"
   }
 }
