@@ -259,4 +259,18 @@ test.group('Ignitor', (group) => {
     await ignitor.fire()
     assert.deepEqual(fold.ioc._autoloads, { 'MyApp': './app' })
   })
+
+  test('load ace commands when loadCommands method is called', async (assert) => {
+    assert.plan(1)
+    const ignitor = new Ignitor(fold)
+    ignitor.appRoot(path.join(__dirname, './'))
+    ignitor._preLoadFiles = []
+    const appFile = require(path.join(__dirname, ignitor._appFile))
+    appFile.aceProviders = ['Adonis/Src/Command']
+    try {
+      await ignitor.loadCommands().fire()
+    } catch ({ message }) {
+      assert.equal(message, `Cannot find module 'Adonis/Src/Command'`)
+    }
+  })
 })

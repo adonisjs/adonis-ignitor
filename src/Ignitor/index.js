@@ -13,10 +13,27 @@ const path = require('path')
 const Helpers = require('../Helpers')
 const hooks = require('../Hooks')
 
+/**
+ * Directories to be binded with resolver
+ *
+ * @type {Object}
+ */
+const DIRECTORIES = {
+  httpControllers: 'Controllers/Http',
+  wsControllers: 'Controllers/Ws',
+  models: 'Models',
+  listeners: 'Listeners',
+  exceptions: 'Exceptions',
+  exceptionHandlers: 'Exceptions/Handlers',
+  middleware: 'Middleware',
+  commands: 'Commands'
+}
+
 class Ignitor {
   constructor (fold) {
     this._fold = fold
     this._appRoot = null
+    this._loadCommands = false
 
     /**
      * Files to be preloaded
@@ -39,6 +56,7 @@ class Ignitor {
     this._optionals = [
       'start/events',
       'start/socket',
+      'start/kernel',
       'database/factory'
     ]
 
@@ -129,15 +147,7 @@ class Ignitor {
      * resolve ioc container paths by passing
      * incremental namespaces.
      */
-    this._fold.resolver.directories({
-      httpControllers: 'Controllers/Http',
-      wsControllers: 'Controllers/Ws',
-      models: 'Models',
-      listeners: 'Listeners',
-      exceptions: 'Exceptions',
-      middleware: 'Middleware',
-      commands: 'Commands'
-    })
+    this._fold.resolver.directories(DIRECTORIES)
   }
 
   /**
@@ -176,22 +186,20 @@ class Ignitor {
    * method will make use of the `appFile` to get the providers
    * list.
    *
-   * @param {String} registerForAce
-   *
    * @method _registerProviders
    *
    * @return {void}
    *
    * @private
    */
-  _registerProviders (registerForAce) {
+  _registerProviders () {
     this._callHooks('before', 'providersRegistered')
 
     /**
      * Getting list of providers and registering them.
      */
     const { providers, aceProviders } = this._getAppAttributes()
-    const providersToRegister = registerForAce ? providers.concat(aceProviders) : providers
+    const providersToRegister = this._loadCommands ? providers.concat(aceProviders) : providers
     this._fold.registrar.providers(providersToRegister).register()
 
     this._callHooks('after', 'providersRegistered')
@@ -301,16 +309,15 @@ class Ignitor {
    *
    * @method _registerCommands
    *
-   * @param  {Object}          ace
-   *
    * @return {void}
    *
    * @preserve
    */
-  _registerCommands (ace) {
+  _registerCommands () {
     this._callHooks('before', 'registerCommands')
 
     const { commands } = this._getAppAttributes()
+    const ace = require(path.join(this._appRoot), '/node_modules/adonis-ace')
     ace.register(commands)
 
     this._callHooks('after', 'registerCommands')
@@ -440,6 +447,19 @@ class Ignitor {
   }
 
   /**
+   * Instructor ignitor to load and register
+   * commands with ace before firing anything.
+   *
+   * @method loadCommands
+   *
+   * @chainable
+   */
+  loadCommands () {
+    this._loadCommands = true
+    return this
+  }
+
+  /**
    * Sets up fire by performing following
    * operations in sequence.
    *
@@ -453,13 +473,11 @@ class Ignitor {
    *
    * @method fire
    *
-   * @param  {Boolean} registerForAce
-   *
    * @return {void}
    *
    * @throws {Error} If app root has not be defined
    */
-  async fire (registerForAce = false) {
+  async fire () {
     if (!this._appRoot) {
       throw new Error('Cannot start http server, make sure to register the app root inside server.js file')
     }
@@ -468,10 +486,17 @@ class Ignitor {
     this._setupResolver()
     this._registerHelpers()
     this._loadHooksFileIfAny()
-    this._registerProviders(registerForAce)
+    this._registerProviders()
     await this._bootProviders()
     this._defineAliases()
     this._loadPreLoadFiles()
+
+    /**
+     * Register commands when loadCommands is set to true.
+     */
+    if (this._loadCommands) {
+      this._registerCommands()
+    }
   }
 
   /**
@@ -494,9 +519,9 @@ class Ignitor {
    * @return {void}
    */
   async fireAce () {
-    await this.fire(true)
+    this.loadCommands()
+    await this.fire()
     const ace = require(path.join(this._appRoot), '/node_modules/adonis-ace')
-    this._registerCommands(ace)
     ace.invoke(this._packageFile)
   }
 }
