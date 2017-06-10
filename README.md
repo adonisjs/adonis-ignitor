@@ -2,7 +2,7 @@
 
 This repo contains all the code for bootstraping AdonisJs applications. It removes all the boilerplate code from your AdonisJs apps to keep them clean 🛁 
 
-<img src="http://res.cloudinary.com/adonisjs/image/upload/q_100/v1497112527/adonis-red-svg_djdrcl.svg" width="200px" align="right" hspace="30px" vspace="140px">
+<img src="http://res.cloudinary.com/adonisjs/image/upload/q_100/v1497112678/adonis-purple_pzkmzt.svg" width="200px" align="right" hspace="30px" vspace="140px">
 
 ## What it does?
 
