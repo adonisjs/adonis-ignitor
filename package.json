@@ -1,0 +1,44 @@
+{
+  "name": "adonis-ignitor",
+  "version": "1.0.0",
+  "description": "Fire the adonis-app (in good sense)",
+  "main": "index.js",
+  "scripts": {
+    "lint": "standard",
+    "pretest": "npm run lint",
+    "posttest": "npm run coverage",
+    "test:local": "FORCE_COLOR=true node bin/index.js --local",
+    "test": "./node_modules/.bin/nyc npm run test:local",
+    "test:win": "set FORCE_COLOR=true && node bin/index.js --win",
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
+  },
+  "keywords": [
+    "adonisjs",
+    "adonis-bootstrapper",
+    "adonis-bootstraper"
+  ],
+  "author": "adonisjs",
+  "license": "MIT",
+  "devDependencies": {
+    "adonis-fold": "git+https://github.com/poppinss/adonis-fold.git#dawn",
+    "adonis-sink": "git+https://github.com/adonisjs/adonis-sink.git",
+    "clear-require": "^2.0.0",
+    "coveralls": "^2.13.0",
+    "cz-conventional-changelog": "^2.0.0",
+    "fs-extra": "^3.0.1",
+    "japa": "^1.0.3",
+    "japa-cli": "^1.0.1",
+    "nyc": "^11.0.2",
+    "semver": "^5.3.0",
+    "standard": "^10.0.2"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "dependencies": {
+    "debug": "^2.6.8",
+    "pify": "^3.0.0"
+  }
+}
