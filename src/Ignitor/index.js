@@ -9,6 +9,7 @@
  * file that was distributed with this source code.
 */
 
+const debug = require('debug')('adonis:ignitor')
 const path = require('path')
 const Helpers = require('../Helpers')
 const hooks = require('../Hooks')
@@ -123,6 +124,7 @@ class Ignitor {
    */
   _setPackageFile () {
     this._packageFile = require(path.join(this._appRoot, 'package.json'))
+    debug('loading package.json from %s directory', this._appRoot)
   }
 
   /**
@@ -138,6 +140,7 @@ class Ignitor {
     const autoload = this._packageFile.autoload || {}
     let [ namespace ] = Object.keys(autoload)
     this.appNamespace = namespace || 'App'
+    const autoloadDirectory = autoload[this.appNamespace] || './app'
 
     /**
      * Set app namespace with resolver. So that resolver
@@ -148,7 +151,7 @@ class Ignitor {
     /**
      * Setting up the autoloaded directory
      */
-    this._fold.ioc.autoload(autoload[this.appNamespace] || './app', this.appNamespace)
+    this._fold.ioc.autoload(autoloadDirectory, this.appNamespace)
 
     /**
      * Bind directories to resolver, so that we can
@@ -156,6 +159,7 @@ class Ignitor {
      * incremental namespaces.
      */
     this._fold.resolver.directories(DIRECTORIES)
+    debug('autoloading %s under %s namespace', autoloadDirectory, this.appNamespace)
   }
 
   /**
@@ -308,6 +312,8 @@ class Ignitor {
    */
   _loadPreLoadFiles () {
     this._callHooks('before', 'preloading')
+    debug('preloading files %j', this._preLoadFiles)
+    debug('optional set %j', this._optionals)
 
     this._preLoadFiles.forEach((file) => {
       try {

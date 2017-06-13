@@ -38,6 +38,7 @@
     }
   },
   "dependencies": {
+    "debug": "^2.6.8",
     "pify": "^3.0.0"
   }
 }
