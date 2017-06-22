@@ -1,6 +1,6 @@
 'use strict'
 
-const { ServiceProvider } = require('adonis-fold')
+const { ServiceProvider } = require('@adonisjs/fold')
 
 class FooProvider extends ServiceProvider {
   constructor (ioc) {

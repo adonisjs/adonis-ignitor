@@ -20,8 +20,8 @@
   "author": "adonisjs",
   "license": "MIT",
   "devDependencies": {
-    "adonis-fold": "git+https://github.com/poppinss/adonis-fold.git#dawn",
-    "adonis-sink": "git+https://github.com/adonisjs/adonis-sink.git",
+    "@adonisjs/fold": "^4.0.0",
+    "@adonisjs/sink": "^1.0.8",
     "clear-require": "^2.0.0",
     "coveralls": "^2.13.0",
     "cz-conventional-changelog": "^2.0.0",
