@@ -1,6 +1,6 @@
 {
-  "name": "adonis-ignitor",
-  "version": "1.0.0",
+  "name": "@adonisjs/ignitor",
+  "version": "1.0.1",
   "description": "Fire the adonis-app (in good sense)",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "pretest": "npm run lint",
     "posttest": "npm run coverage",
     "test:local": "FORCE_COLOR=true node bin/index.js --local",
-    "test": "./node_modules/.bin/nyc npm run test:local",
+    "test": "nyc npm run test:local",
     "test:win": "set FORCE_COLOR=true && node bin/index.js --win",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
@@ -20,8 +20,8 @@
   "author": "adonisjs",
   "license": "MIT",
   "devDependencies": {
-    "adonis-fold": "git+https://github.com/poppinss/adonis-fold.git#dawn",
-    "adonis-sink": "git+https://github.com/adonisjs/adonis-sink.git",
+    "@adonisjs/fold": "^4.0.0",
+    "@adonisjs/sink": "^1.0.8",
     "clear-require": "^2.0.0",
     "coveralls": "^2.13.0",
     "cz-conventional-changelog": "^2.0.0",
@@ -40,5 +40,19 @@
   "dependencies": {
     "debug": "^2.6.8",
     "pify": "^3.0.0"
-  }
+  },
+  "bin": {
+    "ignitor": "index.js"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adonisjs/adonis-ignitor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/adonisjs/adonis-ignitor/issues"
+  },
+  "homepage": "https://github.com/adonisjs/adonis-ignitor#readme"
 }

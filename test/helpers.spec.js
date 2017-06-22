@@ -95,6 +95,6 @@ test.group('Helpers', (group) => {
 
   test('promisify a function', async (assert) => {
     const packageFile = await this.helpers.promisify(fs.readFile)(path.join(__dirname, '../package.json'))
-    assert.equal(JSON.parse(packageFile).name, 'adonis-ignitor')
+    assert.equal(JSON.parse(packageFile).name, '@adonisjs/ignitor')
   })
 })

@@ -2,6 +2,11 @@
 
 This repo contains all the code for bootstraping AdonisJs applications. It removes all the boilerplate code from your AdonisJs apps to keep them clean 🛁 
 
+[![NPM Version][npm-image]][npm-url]
+[![Build Status][travis-image]][travis-url]
+[![Appveyor][appveyor-image]][appveyor-url]
+[![Coveralls][coveralls-image]][coveralls-url]
+
 <img src="http://res.cloudinary.com/adonisjs/image/upload/q_100/v1497112678/adonis-purple_pzkmzt.svg" width="200px" align="right" hspace="30px" vspace="140px">
 
 ## What it does?
@@ -70,3 +75,17 @@ test.failing('2 + 2 is always 4, but add method returns 6', (assert) => {
 ```
 
 Now since the `add` method has a bug, it will return `6` instead of `4`. But the build will pass.
+
+[appveyor-image]: https://img.shields.io/appveyor/ci/thetutlage/adonis-ignitor/master.svg?style=flat-square
+
+[appveyor-url]: https://ci.appveyor.com/project/thetutlage/adonis-ignitor
+
+[npm-image]: https://img.shields.io/npm/v/@adonisjs/ignitor.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/@adonisjs/ignitor
+
+[travis-image]: https://img.shields.io/travis/adonisjs/adonis-ignitor/master.svg?style=flat-square
+[travis-url]: https://travis-ci.org/adonisjs/adonis-ignitor
+
+[coveralls-image]: https://img.shields.io/coveralls/adonisjs/adonis-ignitor/develop.svg?style=flat-square
+
+[coveralls-url]: https://coveralls.io/github/adonisjs/adonis-ignitor
