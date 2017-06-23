@@ -1,3 +1,13 @@
+<a name="1.0.2"></a>
+## [1.0.2](https://github.com/adonisjs/adonis-ignitor/compare/v1.0.1...v1.0.2) (2017-06-23)
+
+
+### Bug Fixes
+
+* **ignitor:** pass absolute path to ioc.autoload ([dcef63c](https://github.com/adonisjs/adonis-ignitor/commit/dcef63c))
+
+
+
 <a name="1.0.1"></a>
 ## [1.0.1](https://github.com/adonisjs/adonis-ignitor/compare/v1.0.0...v1.0.1) (2017-06-22)
 
