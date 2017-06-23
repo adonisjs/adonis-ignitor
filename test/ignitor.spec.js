@@ -250,7 +250,7 @@ test.group('Ignitor', (group) => {
     await ignitor.fire()
     assert.property(fold.resolver._directories, 'httpControllers')
     assert.property(fold.resolver._directories, 'models')
-    assert.deepEqual(fold.ioc._autoloads, { 'App': './app' })
+    assert.deepEqual(fold.ioc._autoloads, { 'App': path.join(__dirname, './app') })
   })
 
   test('setup default namespace when autoload key is defined but values are missing', async (assert) => {
@@ -260,7 +260,7 @@ test.group('Ignitor', (group) => {
     pkgFile.autoload = {}
     ignitor._preLoadFiles = []
     await ignitor.fire()
-    assert.deepEqual(fold.ioc._autoloads, { 'App': './app' })
+    assert.deepEqual(fold.ioc._autoloads, { 'App': path.join(__dirname, './app') })
   })
 
   test('use package file autoload values when defined', async (assert) => {
@@ -272,7 +272,7 @@ test.group('Ignitor', (group) => {
     }
     ignitor._preLoadFiles = []
     await ignitor.fire()
-    assert.deepEqual(fold.ioc._autoloads, { 'MyApp': './app' })
+    assert.deepEqual(fold.ioc._autoloads, { 'MyApp': path.join(__dirname, './app') })
   })
 
   test('load ace commands when loadCommands method is called', async (assert) => {

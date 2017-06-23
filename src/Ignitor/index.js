@@ -140,7 +140,7 @@ class Ignitor {
     const autoload = this._packageFile.autoload || {}
     let [ namespace ] = Object.keys(autoload)
     this.appNamespace = namespace || 'App'
-    const autoloadDirectory = autoload[this.appNamespace] || './app'
+    const autoloadDirectory = (path.join(this._appRoot, autoload[this.appNamespace] || './app'))
 
     /**
      * Set app namespace with resolver. So that resolver
