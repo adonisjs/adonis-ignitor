@@ -361,7 +361,7 @@ class Ignitor {
 
     const { commands } = this._getAppAttributes()
     const ace = require(path.join(this._appRoot, '/node_modules/@adonisjs/ace'))
-    ace.register(commands)
+    commands.forEach((command) => ace.addCommand(command))
 
     this._callHooks('after', 'registerCommands')
   }
