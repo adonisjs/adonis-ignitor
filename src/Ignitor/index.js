@@ -360,7 +360,7 @@ class Ignitor {
     this._callHooks('before', 'registerCommands')
 
     const { commands } = this._getAppAttributes()
-    const ace = require(path.join(this._appRoot, '/node_modules/adonis-ace'))
+    const ace = require(path.join(this._appRoot, '/node_modules/@adonisjs/ace'))
     ace.register(commands)
 
     this._callHooks('after', 'registerCommands')
@@ -565,7 +565,8 @@ class Ignitor {
   async fireAce () {
     this.loadCommands()
     await this.fire()
-    const ace = require(path.join(this._appRoot, '/node_modules/adonis-ace'))
+    const ace = require(path.join(this._appRoot, '/node_modules/@adonisjs/ace'))
+    ace.wireUpWithCommander()
     ace.invoke(this._packageFile)
   }
 }
