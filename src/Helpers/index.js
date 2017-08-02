@@ -19,6 +19,7 @@ const pify = require('pify')
  * @namespace Adonis/Src/Helpers
  * @alias Helpers
  * @singleton
+ * @group Core
  *
  * @class Helpers
  * @constructor

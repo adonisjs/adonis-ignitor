@@ -1,6 +1,6 @@
 {
   "name": "@adonisjs/ignitor",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Fire the adonis-app (in good sense)",
   "main": "index.js",
   "scripts": {
@@ -20,22 +20,27 @@
   "author": "adonisjs",
   "license": "MIT",
   "devDependencies": {
-    "@adonisjs/fold": "^4.0.0",
-    "@adonisjs/sink": "^1.0.8",
+    "@adonisjs/fold": "^4.0.2",
+    "@adonisjs/sink": "^1.0.11",
     "clear-require": "^2.0.0",
-    "coveralls": "^2.13.0",
+    "coveralls": "^2.13.1",
     "cz-conventional-changelog": "^2.0.0",
-    "fs-extra": "^3.0.1",
+    "fs-extra": "^4.0.1",
     "japa": "^1.0.3",
     "japa-cli": "^1.0.1",
-    "nyc": "^11.0.2",
-    "semver": "^5.3.0",
+    "nyc": "^11.1.0",
+    "semver": "^5.4.1",
     "standard": "^10.0.2"
   },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "nyc": {
+    "exclude": [
+      "bin"
+    ]
   },
   "dependencies": {
     "debug": "^2.6.8",
