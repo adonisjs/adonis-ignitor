@@ -181,11 +181,13 @@ class Ignitor {
     const handleRelativePath = `${DIRECTORIES['exceptions']}/Handler`
     try {
       require(path.join(this._appRoot, 'app', handleRelativePath))
+      debug('using %s for handling exceptions', `${this.appNamespace}/${handleRelativePath}`)
       this._fold.ioc.use('Adonis/Src/Exception').bind('*', `${this.appNamespace}/${handleRelativePath}`)
     } catch (error) {
       if (error.code !== 'MODULE_NOT_FOUND') {
         throw error
       }
+      debug('using %s for handling exceptions', '@provider:Adonis/Exceptions/Handler')
       this._fold.ioc.use('Adonis/Src/Exception').bind('*', '@provider:Adonis/Exceptions/Handler')
     }
   }
@@ -205,6 +207,7 @@ class Ignitor {
       return new Helpers(this._appRoot)
     })
     this._fold.ioc.alias('Adonis/Src/Helpers', 'Helpers')
+    debug('registered helpers')
   }
 
   /**
@@ -243,6 +246,7 @@ class Ignitor {
     const providersToRegister = this._loadCommands ? providers.concat(aceProviders) : providers
     this._fold.registrar.providers(providersToRegister).register()
 
+    debug('registered providers')
     this._callHooks('after', 'providersRegistered')
   }
 
@@ -266,6 +270,7 @@ class Ignitor {
      */
     await this._fold.registrar.boot()
 
+    debug('booted providers')
     this._callHooks('after', 'providersBooted')
   }
 
