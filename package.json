@@ -20,7 +20,7 @@
   "author": "adonisjs",
   "license": "MIT",
   "devDependencies": {
-    "@adonisjs/fold": "^4.0.1",
+    "@adonisjs/fold": "^4.0.2",
     "@adonisjs/sink": "^1.0.11",
     "clear-require": "^2.0.0",
     "coveralls": "^2.13.1",
@@ -38,7 +38,9 @@
     }
   },
   "nyc": {
-    "exclude": ["bin"]
+    "exclude": [
+      "bin"
+    ]
   },
   "dependencies": {
     "debug": "^2.6.8",
