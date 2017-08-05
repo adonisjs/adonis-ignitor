@@ -23,6 +23,8 @@ const DIRECTORIES = {
   httpControllers: 'Controllers/Http',
   wsControllers: 'Controllers/Ws',
   models: 'Models',
+  modelHooks: 'Models/Hooks',
+  modelTraits: 'Models/Traits',
   listeners: 'Listeners',
   exceptions: 'Exceptions',
   exceptionHandlers: 'Exceptions/Handlers',

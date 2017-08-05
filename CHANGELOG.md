@@ -1,3 +1,13 @@
+<a name="1.0.6"></a>
+## [1.0.6](https://github.com/adonisjs/adonis-ignitor/compare/v1.0.5...v1.0.6) (2017-08-05)
+
+
+### Bug Fixes
+
+* **ignitor:** add modelHooks and traits directory ([1dc04f1](https://github.com/adonisjs/adonis-ignitor/commit/1dc04f1))
+
+
+
 <a name="1.0.5"></a>
 ## [1.0.5](https://github.com/adonisjs/adonis-ignitor/compare/v1.0.4...v1.0.5) (2017-08-02)
 
