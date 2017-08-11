@@ -24,6 +24,10 @@ test.group('Helpers', (group) => {
     assert.equal(this.helpers.appRoot(), path.join(__dirname, './'))
   })
 
+  test('return path to file from app root', (assert) => {
+    assert.equal(this.helpers.appRoot('content'), path.join(__dirname, '/content'))
+  })
+
   test('return path to public dir', (assert) => {
     assert.equal(this.helpers.publicPath(), path.join(__dirname, './public'))
   })

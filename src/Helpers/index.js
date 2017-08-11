@@ -34,10 +34,12 @@ class Helpers {
    *
    * @method appRoot
    *
+   * @param  {String}   [toFile = '']
+   *
    * @return {String}
    */
-  appRoot () {
-    return this._appRoot
+  appRoot (toFile = '') {
+    return path.join(this._appRoot, toFile)
   }
 
   /**
