@@ -1,3 +1,13 @@
+<a name="1.0.7"></a>
+## [1.0.7](https://github.com/adonisjs/adonis-ignitor/compare/v1.0.6...v1.0.7) (2017-08-18)
+
+
+### Features
+
+* **helpers:** return path to file/folder from app root ([79beea5](https://github.com/adonisjs/adonis-ignitor/commit/79beea5))
+
+
+
 <a name="1.0.6"></a>
 ## [1.0.6](https://github.com/adonisjs/adonis-ignitor/compare/v1.0.5...v1.0.6) (2017-08-05)
 
