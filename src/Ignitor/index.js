@@ -29,7 +29,8 @@ const DIRECTORIES = {
   exceptions: 'Exceptions',
   exceptionHandlers: 'Exceptions/Handlers',
   middleware: 'Middleware',
-  commands: 'Commands'
+  commands: 'Commands',
+  validators: 'Validators'
 }
 
 class Ignitor {
