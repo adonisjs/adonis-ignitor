@@ -591,7 +591,8 @@ class Ignitor {
     await this.fire()
     const ace = require(path.join(this._appRoot, '/node_modules/@adonisjs/ace'))
     ace.wireUpWithCommander()
-    ace.invoke(this._packageFile)
+    const version = this._packageFile['adonis-version'] || 'NA'
+    ace.invoke({ version })
   }
 }
 
