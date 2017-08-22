@@ -10,7 +10,6 @@
 */
 
 const debug = require('debug')('adonis:ignitor')
-const getPort = require('get-port')
 const path = require('path')
 const Helpers = require('../Helpers')
 const hooks = require('../Hooks')
@@ -402,22 +401,10 @@ class Ignitor {
       Server.setInstance(customHttpInstance)
     }
 
-    const host = Env.get('HOST')
-
-    /**
-     * Search for an available port when the default
-     * one is busy. But only in development
-     *
-     * @type {Number}
-     */
-    const port = Env.get('NODE_ENV') === 'development'
-    ? await getPort({ port: Env.get('PORT'), host })
-    : Env.get('PORT')
-
     /**
      * Start the server
      */
-    Server.listen(host, port, () => (this._callHooks('after', 'httpServer')))
+    Server.listen(Env.get('HOST'), Env.get('PORT'), () => (this._callHooks('after', 'httpServer')))
   }
 
   /**

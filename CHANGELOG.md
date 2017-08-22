@@ -1,3 +1,13 @@
+<a name="1.0.10"></a>
+## [1.0.10](https://github.com/adonisjs/adonis-ignitor/compare/v1.0.9...v1.0.10) (2017-08-22)
+
+
+### Reverts
+
+* **ignitor:** remove port discovery ([bacac68](https://github.com/adonisjs/adonis-ignitor/commit/bacac68))
+
+
+
 <a name="1.0.9"></a>
 ## [1.0.9](https://github.com/adonisjs/adonis-ignitor/compare/v1.0.8...v1.0.9) (2017-08-22)
 

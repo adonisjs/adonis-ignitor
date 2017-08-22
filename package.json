@@ -1,6 +1,6 @@
 {
   "name": "@adonisjs/ignitor",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Fire the adonis-app (in good sense)",
   "main": "index.js",
   "scripts": {
@@ -44,7 +44,6 @@
   },
   "dependencies": {
     "debug": "^2.6.8",
-    "get-port": "^3.2.0",
     "pify": "^3.0.0"
   },
   "bin": {
