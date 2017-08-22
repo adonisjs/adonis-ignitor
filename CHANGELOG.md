@@ -1,3 +1,8 @@
+<a name="1.0.9"></a>
+## [1.0.9](https://github.com/adonisjs/adonis-ignitor/compare/v1.0.8...v1.0.9) (2017-08-22)
+
+
+
 <a name="1.0.8"></a>
 ## [1.0.8](https://github.com/adonisjs/adonis-ignitor/compare/v1.0.7...v1.0.8) (2017-08-22)
 
