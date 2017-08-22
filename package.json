@@ -1,6 +1,6 @@
 {
   "name": "@adonisjs/ignitor",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Fire the adonis-app (in good sense)",
   "main": "index.js",
   "scripts": {

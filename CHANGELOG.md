@@ -1,3 +1,14 @@
+<a name="1.0.8"></a>
+## [1.0.8](https://github.com/adonisjs/adonis-ignitor/compare/v1.0.7...v1.0.8) (2017-08-22)
+
+
+### Features
+
+* **resolver:** add validators dir to the map ([04deced](https://github.com/adonisjs/adonis-ignitor/commit/04deced))
+* **server:** auto discover port when default one is empty ([aab9923](https://github.com/adonisjs/adonis-ignitor/commit/aab9923))
+
+
+
 <a name="1.0.7"></a>
 ## [1.0.7](https://github.com/adonisjs/adonis-ignitor/compare/v1.0.6...v1.0.7) (2017-08-18)
 
