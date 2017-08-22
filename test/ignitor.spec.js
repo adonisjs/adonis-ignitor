@@ -352,7 +352,7 @@ test.group('Ignitor', (group) => {
     const ignitor = new Ignitor(fold)
 
     class Server {
-      listen () {}
+      listen (h, p, cb) { cb() }
     }
 
     const events = []
