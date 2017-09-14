@@ -1,3 +1,13 @@
+<a name="1.0.11"></a>
+## [1.0.11](https://github.com/adonisjs/adonis-ignitor/compare/v1.0.10...v1.0.11) (2017-09-14)
+
+
+### Features
+
+* **ignitor:** switch node env to testing on exec test command ([10ba6bd](https://github.com/adonisjs/adonis-ignitor/commit/10ba6bd))
+
+
+
 <a name="1.0.10"></a>
 ## [1.0.10](https://github.com/adonisjs/adonis-ignitor/compare/v1.0.9...v1.0.10) (2017-08-22)
 

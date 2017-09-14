@@ -574,6 +574,19 @@ class Ignitor {
    * @return {void}
    */
   async fireAce () {
+    /**
+     * Since ignitor is just used by Adonis, I am taking the privelage
+     * to update the `NODE_ENV` to testing when `test` command is
+     * executed.
+     *
+     * This is the only place I can do this weird thing, since everything
+     * else is executed once the app has been booted, and changing
+     * the node env will have no impact.
+     */
+    if (process.argv.slice(2)[0] === 'test') {
+      process.env.NODE_ENV = 'testing'
+    }
+
     this.loadCommands()
     await this.fire()
     const ace = require(path.join(this._appRoot, '/node_modules/@adonisjs/ace'))
