@@ -131,19 +131,20 @@ class Ignitor {
   }
 
   /**
-   * Sets up resolver by registering paths to important
-   * directories and setting up the autoloaded path
-   * to the IoC container.
+   * Sets up resolver primary namespace and register paths to
+   * important directories.
    *
    * @method _setupResolver
    *
+   * @param {String} namespace
+   *
    * @return {void}
+   *
+   * @private
    */
-  _setupResolver () {
-    const autoload = this._packageFile.autoload || {}
-    let [ namespace ] = Object.keys(autoload)
-    this.appNamespace = namespace || 'App'
-    const autoloadDirectory = (path.join(this._appRoot, autoload[this.appNamespace] || './app'))
+  _setupResolver (namespace) {
+    this.appNamespace = namespace
+    debug('%s is the primary namespace', namespace)
 
     /**
      * Set app namespace with resolver. So that resolver
@@ -152,17 +153,47 @@ class Ignitor {
     this._fold.resolver.appNamespace(this.appNamespace)
 
     /**
-     * Setting up the autoloaded directory
-     */
-    this._fold.ioc.autoload(autoloadDirectory, this.appNamespace)
-
-    /**
      * Bind directories to resolver, so that we can
      * resolve ioc container paths by passing
      * incremental namespaces.
      */
     this._fold.resolver.directories(DIRECTORIES)
-    debug('autoloading %s under %s namespace', autoloadDirectory, this.appNamespace)
+  }
+
+  /**
+   * Registers all directories from the package.json file
+   * to IoC container as autoloaded.
+   *
+   * First namespace/directory key/value pair will be used as
+   * primary autoloaded directory and doesn't require
+   * fullnamespaces at different places.
+   *
+   * @method _registerAutoloadedDirectories
+   *
+   * @return {void}
+   *
+   * @private
+   */
+  _registerAutoloadedDirectories () {
+    let autoloads = this._packageFile.autoload || {}
+
+    /**
+     * Defining fallback autoload when nothing autoloads
+     * map is empty
+     */
+    if (Object.keys(autoloads).length === 0) {
+      autoloads = { 'App': './app' }
+    }
+
+    Object.keys(autoloads).forEach((namespace, index) => {
+      const namespaceLocation = path.join(this._appRoot, autoloads[namespace])
+      if (index === 0) {
+        this._setupResolver(namespace)
+      }
+
+      this._fold.ioc.autoload(namespaceLocation, namespace)
+      debug('autoloading %s under %s namespace', namespaceLocation, namespace)
+    })
   }
 
   /**
@@ -538,7 +569,7 @@ class Ignitor {
     }
 
     this._setPackageFile()
-    this._setupResolver()
+    this._registerAutoloadedDirectories()
     this._registerHelpers()
     this._loadHooksFileIfAny()
     this._registerProviders()
