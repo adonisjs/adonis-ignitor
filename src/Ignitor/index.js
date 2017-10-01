@@ -325,7 +325,8 @@ class Ignitor {
 
     this._preLoadFiles.forEach((file) => {
       try {
-        require(path.join(this._appRoot, file))
+        const filePath = path.isAbsolute(file) ? file : path.join(this._appRoot, file)
+        require(filePath)
       } catch (error) {
         if (error.code !== 'MODULE_NOT_FOUND' || !this._isOptional(file)) {
           throw error
@@ -544,7 +545,6 @@ class Ignitor {
     await this._bootProviders()
     this._defineAliases()
     this._setupExceptionsHandler()
-    this._loadPreLoadFiles()
 
     /**
      * Register commands when loadCommands is set to true.
@@ -552,6 +552,8 @@ class Ignitor {
     if (this._loadCommands) {
       this._registerCommands()
     }
+
+    this._loadPreLoadFiles()
   }
 
   /**
