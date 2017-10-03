@@ -329,7 +329,7 @@ test.group('Ignitor', (group) => {
     })
 
     ignitor._setPackageFile()
-    ignitor._setupResolver()
+    ignitor._registerAutoloadedDirectories()
     ignitor._setupExceptionsHandler()
     await fs.remove(path.join(__dirname, './app'))
   })
