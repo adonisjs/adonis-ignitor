@@ -1,3 +1,18 @@
+<a name="1.0.12"></a>
+## [1.0.12](https://github.com/adonisjs/adonis-ignitor/compare/v1.0.11...v1.0.12) (2017-10-03)
+
+
+### Bug Fixes
+
+* **ignitor:** allow preload file path to be absolute ([bb35c48](https://github.com/adonisjs/adonis-ignitor/commit/bb35c48))
+
+
+### Features
+
+* **autoload:** register all autoload directories from package.json file ([39d9015](https://github.com/adonisjs/adonis-ignitor/commit/39d9015))
+
+
+
 <a name="1.0.11"></a>
 ## [1.0.11](https://github.com/adonisjs/adonis-ignitor/compare/v1.0.10...v1.0.11) (2017-09-14)
 
