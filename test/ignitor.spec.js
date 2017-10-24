@@ -371,4 +371,32 @@ test.group('Ignitor', (group) => {
     await ignitor.fireHttpServer()
     assert.deepEqual(events, ['before:httpServer', 'after:httpServer'])
   })
+
+  test('bind custom http instance to adonis', async (assert) => {
+    const ignitor = new Ignitor(fold)
+    let customInstance = null
+
+    class Server {
+      setInstance (i) {
+        customInstance = i
+      }
+
+      handle () {}
+
+      listen (h, p, cb) { cb() }
+    }
+
+    fold.ioc.fake('Adonis/Src/Server', () => new Server())
+    fold.ioc.fake('Adonis/Src/Env', () => new Env())
+
+    ignitor.appRoot(path.join(__dirname, './'))
+    let server = null
+
+    await ignitor.fireHttpServer(function (handler) {
+      server = require('http').createServer(handler)
+      return server
+    })
+
+    assert.deepEqual(customInstance, server)
+  })
 })
