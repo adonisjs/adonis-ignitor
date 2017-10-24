@@ -11,6 +11,8 @@
 
 const debug = require('debug')('adonis:ignitor')
 const path = require('path')
+const exitHook = require('exit-hook')
+
 const Helpers = require('../Helpers')
 const hooks = require('../Hooks')
 
@@ -440,6 +442,28 @@ class Ignitor {
   }
 
   /**
+   * Binds the listener to gracefully shutdown
+   * the server
+   *
+   * @method _gracefullyShutDown
+   *
+   * @return {void}
+   *
+   * @private
+   */
+  _gracefullyShutDown () {
+    /**
+     * Gracefully closing http server
+     */
+    exitHook(() => {
+      const Server = this._fold.ioc.use('Adonis/Src/Server')
+      Server.getInstance().on('close', function () {
+        process.exit(0)
+      })
+    })
+  }
+
+  /**
    * Preloads a file by appending it to the end
    * of the preloads list.
    *
@@ -597,6 +621,7 @@ class Ignitor {
   async fireHttpServer (customHttpInstance = null) {
     await this.fire()
     await this._startHttpServer()
+    this._gracefullyShutDown()
   }
 
   /**
