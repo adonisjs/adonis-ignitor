@@ -30,6 +30,8 @@ test.group('Ignitor', (group) => {
     fold.ioc.fake('Adonis/Src/Exception', () => {
       return { bind () {} }
     })
+
+    process.removeAllListeners('unhandledRejection')
   })
 
   test('register app root', (assert) => {

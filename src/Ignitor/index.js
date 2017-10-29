@@ -16,6 +16,13 @@ const exitHook = require('exit-hook')
 const Helpers = require('../Helpers')
 const hooks = require('../Hooks')
 
+const WARNING_MESSAGE = `
+  WARNING: Adonis has detect an unhandled promise rejection, which may
+  cause undesired behavior in production.
+  Make sure to always attach (catch) method on promises and wrap await
+  calls inside try/catch.
+`
+
 /**
  * Directories to be binded with resolver
  *
@@ -464,7 +471,7 @@ class Ignitor {
      */
     exitHook(() => {
       const Server = this._fold.ioc.use('Adonis/Src/Server')
-      Server.getInstance().on('close', function () {
+      Server.getInstance().once('close', function () {
         process.exit(0)
       })
     })
@@ -595,6 +602,15 @@ class Ignitor {
    * @throws {Error} If app root has not be defined
    */
   async fire () {
+    process.once('unhandledRejection', (response) => {
+      try {
+        this._fold.ioc.use('Adonis/Src/Logger').warning(WARNING_MESSAGE)
+      } catch (error) {
+        console.warn(WARNING_MESSAGE)
+      }
+      console.error(response)
+    })
+
     if (!this._appRoot) {
       throw new Error('Cannot start http server, make sure to register the app root inside server.js file')
     }
