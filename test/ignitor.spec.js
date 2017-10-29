@@ -31,7 +31,7 @@ test.group('Ignitor', (group) => {
       return { bind () {} }
     })
 
-    process.removeAllListeners('unhandledRejection')
+    // process.removeAllListeners('unhandledRejection')
   })
 
   test('register app root', (assert) => {
@@ -97,12 +97,17 @@ test.group('Ignitor', (group) => {
     }
   })
 
-  test('register providers by requiring the app file', (assert) => {
-    const ignitor = new Ignitor(fold)
-    ignitor.appRoot(path.join(__dirname, './'))
-    ignitor._preLoadFiles = []
-    ignitor._startHttpServer = function () {}
-    ignitor.fireHttpServer()
+  test('register providers by requiring the app file', async (assert) => {
+    try {
+      const ignitor = new Ignitor(fold)
+      ignitor.appRoot(path.join(__dirname, './'))
+      ignitor._preLoadFiles = []
+      ignitor._startHttpServer = function () {}
+      ignitor._gracefullyShutDown = function () {}
+      await ignitor.fireHttpServer()
+    } catch (error) {
+      console.log(error)
+    }
   })
 
   test('emit before and after registered provider events', (assert) => {
@@ -117,6 +122,7 @@ test.group('Ignitor', (group) => {
     ignitor.appRoot(path.join(__dirname, './'))
     ignitor._preLoadFiles = []
     ignitor._startHttpServer = function () {}
+    ignitor._gracefullyShutDown = function () {}
     ignitor.fireHttpServer()
     assert.deepEqual(events, ['before', 'after'])
   })
@@ -145,6 +151,8 @@ test.group('Ignitor', (group) => {
     ignitor.appRoot(path.join(__dirname, './'))
     ignitor._preLoadFiles = []
     ignitor._startHttpServer = function () {}
+    ignitor._gracefullyShutDown = function () {}
+
     ignitor.fireHttpServer()
     assert.deepEqual(events, ['before', 'before 1', 'after', 'after 1'])
   })
@@ -154,6 +162,8 @@ test.group('Ignitor', (group) => {
     ignitor.appRoot(path.join(__dirname, './'))
     ignitor._preLoadFiles = []
     ignitor._startHttpServer = function () {}
+    ignitor._gracefullyShutDown = function () {}
+
     await ignitor.fireHttpServer()
     assert.deepEqual(fold.registrar._providers[0]._events, ['register', 'boot'])
   })
@@ -167,6 +177,8 @@ test.group('Ignitor', (group) => {
     ]
     ignitor._preLoadFiles = []
     ignitor._startHttpServer = function () {}
+    ignitor._gracefullyShutDown = function () {}
+
     await ignitor.fireHttpServer()
     assert.deepEqual(fold.registrar._providers[0]._events, ['register', 'boot'])
   })
@@ -187,6 +199,8 @@ test.group('Ignitor', (group) => {
     ignitor.appRoot(path.join(__dirname, './'))
     ignitor._preLoadFiles = []
     ignitor._startHttpServer = function () {}
+    ignitor._gracefullyShutDown = function () {}
+
     await ignitor.fireHttpServer()
     assert.deepEqual(events, ['before registered', 'after registered', 'before booted', 'after booted'])
   })
@@ -203,6 +217,8 @@ test.group('Ignitor', (group) => {
 
     ignitor._preLoadFiles = []
     ignitor._startHttpServer = function () {}
+    ignitor._gracefullyShutDown = function () {}
+
     await ignitor.fireHttpServer()
     assert.property(fold.ioc._aliases, 'Route')
     assert.property(fold.ioc._aliases, 'Server')
@@ -213,6 +229,8 @@ test.group('Ignitor', (group) => {
     ignitor.appRoot(path.join(__dirname, './'))
     ignitor._preLoadFiles = ['start/routes', 'start/events']
     ignitor._startHttpServer = function () {}
+    ignitor._gracefullyShutDown = function () {}
+
     await ignitor.fireHttpServer()
   })
 
@@ -227,6 +245,8 @@ test.group('Ignitor', (group) => {
     ignitor.appRoot(path.join(__dirname, './'))
     ignitor._preLoadFiles = []
     ignitor._startHttpServer = function () {}
+    ignitor._gracefullyShutDown = function () {}
+
     await ignitor.fireHttpServer()
     assert.deepEqual(events, ['before preloading', 'after preloading'])
   })
@@ -355,6 +375,11 @@ test.group('Ignitor', (group) => {
 
     class Server {
       listen (h, p, cb) { cb() }
+      getInstance () {
+        return {
+          once () {}
+        }
+      }
     }
 
     const events = []
@@ -381,6 +406,10 @@ test.group('Ignitor', (group) => {
     class Server {
       setInstance (i) {
         customInstance = i
+      }
+
+      getInstance () {
+        return customInstance
       }
 
       handle () {}
