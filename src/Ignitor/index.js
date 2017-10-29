@@ -17,9 +17,9 @@ const Helpers = require('../Helpers')
 const hooks = require('../Hooks')
 
 const WARNING_MESSAGE = `
-  WARNING: Adonis has detect an unhandled promise rejection, which may
+  WARNING: Adonis has detected an unhandled promise rejection, which may
   cause undesired behavior in production.
-  Make sure to always attach (catch) method on promises and wrap await
+  To stop this warning, use catch() on promises and wrap await
   calls inside try/catch.
 `
 
