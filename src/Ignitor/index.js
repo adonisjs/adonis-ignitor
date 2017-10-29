@@ -11,8 +11,17 @@
 
 const debug = require('debug')('adonis:ignitor')
 const path = require('path')
+const exitHook = require('exit-hook')
+
 const Helpers = require('../Helpers')
 const hooks = require('../Hooks')
+
+const WARNING_MESSAGE = `
+  WARNING: Adonis has detect an unhandled promise rejection, which may
+  cause undesired behavior in production.
+  Make sure to always attach (catch) method on promises and wrap await
+  calls inside try/catch.
+`
 
 /**
  * Directories to be binded with resolver
@@ -410,7 +419,7 @@ class Ignitor {
    * Start the http server using server and env
    * provider
    *
-   * @param {Object} customHttpInstance
+   * @param {Object} httpServerCallback
    *
    * @method _startHttpServer
    * @async
@@ -419,7 +428,7 @@ class Ignitor {
    *
    * @private
    */
-  async _startHttpServer (customHttpInstance) {
+  async _startHttpServer (httpServerCallback) {
     this._callHooks('before', 'httpServer')
 
     const Server = this._fold.ioc.use('Adonis/Src/Server')
@@ -429,14 +438,43 @@ class Ignitor {
      * If a custom http instance is defined, set it
      * on the server provider.
      */
-    if (customHttpInstance) {
-      Server.setInstance(customHttpInstance)
+    if (typeof (httpServerCallback) === 'function') {
+      debug('binding custom http instance to adonis server')
+      const instance = httpServerCallback(Server.handle.bind(Server))
+      Server.setInstance(instance)
     }
 
     /**
      * Start the server
      */
-    Server.listen(Env.get('HOST'), Env.get('PORT'), () => (this._callHooks('after', 'httpServer')))
+    Server.listen(Env.get('HOST'), Env.get('PORT'), () => {
+      if (typeof (process.emit) === 'function') {
+        process.emit('adonis:server:start')
+      }
+      this._callHooks('after', 'httpServer')
+    })
+  }
+
+  /**
+   * Binds the listener to gracefully shutdown
+   * the server
+   *
+   * @method _gracefullyShutDown
+   *
+   * @return {void}
+   *
+   * @private
+   */
+  _gracefullyShutDown () {
+    /**
+     * Gracefully closing http server
+     */
+    exitHook(() => {
+      const Server = this._fold.ioc.use('Adonis/Src/Server')
+      Server.getInstance().once('close', function () {
+        process.exit(0)
+      })
+    })
   }
 
   /**
@@ -564,6 +602,15 @@ class Ignitor {
    * @throws {Error} If app root has not be defined
    */
   async fire () {
+    process.once('unhandledRejection', (response) => {
+      try {
+        this._fold.ioc.use('Adonis/Src/Logger').warning(WARNING_MESSAGE)
+      } catch (error) {
+        console.warn(WARNING_MESSAGE)
+      }
+      console.error(response)
+    })
+
     if (!this._appRoot) {
       throw new Error('Cannot start http server, make sure to register the app root inside server.js file')
     }
@@ -592,11 +639,14 @@ class Ignitor {
    *
    * @method fireHttpServer
    *
+   * @param {Function} httpServerCallback
+   *
    * @return {void}
    */
-  async fireHttpServer (customHttpInstance = null) {
+  async fireHttpServer (httpServerCallback) {
     await this.fire()
-    await this._startHttpServer()
+    await this._startHttpServer(httpServerCallback)
+    this._gracefullyShutDown()
   }
 
   /**

@@ -1,3 +1,20 @@
+<a name="1.0.13"></a>
+## [1.0.13](https://github.com/adonisjs/adonis-ignitor/compare/v1.0.12...v1.0.13) (2017-10-29)
+
+
+### Bug Fixes
+
+* **http:** allow end-user to bind custom http instance ([703ef28](https://github.com/adonisjs/adonis-ignitor/commit/703ef28))
+* **ignitor:** fix breaking tests ([8d676e4](https://github.com/adonisjs/adonis-ignitor/commit/8d676e4))
+
+
+### Features
+
+* **http:** add hook to gracefully shutdown server ([26b0684](https://github.com/adonisjs/adonis-ignitor/commit/26b0684))
+* **ignitor:** handle `unhandledRejections` ([b6f6d06](https://github.com/adonisjs/adonis-ignitor/commit/b6f6d06)), closes [#1](https://github.com/adonisjs/adonis-ignitor/issues/1)
+
+
+
 <a name="1.0.12"></a>
 ## [1.0.12](https://github.com/adonisjs/adonis-ignitor/compare/v1.0.11...v1.0.12) (2017-10-03)
 
