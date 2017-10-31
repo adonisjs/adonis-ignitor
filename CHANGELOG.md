@@ -1,3 +1,13 @@
+<a name="1.0.14"></a>
+## [1.0.14](https://github.com/adonisjs/adonis-ignitor/compare/v1.0.13...v1.0.14) (2017-10-31)
+
+
+### Bug Fixes
+
+* **helpers:** return true from isAceCommand when executed via adonis global ([6117093](https://github.com/adonisjs/adonis-ignitor/commit/6117093)), closes [#3](https://github.com/adonisjs/adonis-ignitor/issues/3)
+
+
+
 <a name="1.0.13"></a>
 ## [1.0.13](https://github.com/adonisjs/adonis-ignitor/compare/v1.0.12...v1.0.13) (2017-10-29)
 

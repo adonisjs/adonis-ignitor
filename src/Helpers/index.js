@@ -210,7 +210,15 @@ class Helpers {
    */
   isAceCommand () {
     const processFile = process.mainModule.filename
-    return processFile.endsWith('ace')
+    if (processFile.endsWith('ace')) {
+      return true
+    }
+
+    /**
+     * When command is executed via `adonis cli`, then ace is a children
+     * of the process mainModule
+     */
+    return !!process.mainModule.children.find((child) => child.filename.endsWith('ace'))
   }
 }
 
