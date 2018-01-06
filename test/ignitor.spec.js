@@ -30,8 +30,7 @@ test.group('Ignitor', (group) => {
     fold.ioc.fake('Adonis/Src/Exception', () => {
       return { bind () {} }
     })
-
-    // process.removeAllListeners('unhandledRejection')
+    process.removeAllListeners('unhandledRejection')
   })
 
   test('register app root', (assert) => {
@@ -429,5 +428,20 @@ test.group('Ignitor', (group) => {
     })
 
     assert.deepEqual(customInstance, server)
+  })
+
+  test('do not swallow errors in preloading files', async (assert) => {
+    assert.plan(1)
+
+    const ignitor = new Ignitor(fold)
+    ignitor.appRoot(path.join(__dirname, './'))
+    ignitor.preLoad('start/emitsError.js')
+    ignitor._optionals.push('start/emitsError.js')
+
+    try {
+      ignitor._loadPreLoadFiles()
+    } catch (error) {
+      assert.equal(error.code, 'MODULE_NOT_FOUND')
+    }
   })
 })

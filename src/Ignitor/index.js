@@ -12,6 +12,7 @@
 const debug = require('debug')('adonis:ignitor')
 const path = require('path')
 const exitHook = require('exit-hook')
+const fs = require('fs')
 
 const Helpers = require('../Helpers')
 const hooks = require('../Hooks')
@@ -19,7 +20,7 @@ const hooks = require('../Hooks')
 const WARNING_MESSAGE = `
   WARNING: Adonis has detected an unhandled promise rejection, which may
   cause undesired behavior in production.
-  To stop this warning, use catch() on promises and wrap await
+  To stop this warning, use catch() on promises or wrap await
   calls inside try/catch.
 `
 
@@ -350,6 +351,29 @@ class Ignitor {
   }
 
   /**
+   * Returns a boolean telling whether a file exists
+   * or not
+   *
+   * @method _optionalFileExists
+   *
+   * @param  {String}            filePath
+   *
+   * @return {Boolean}
+   *
+   * @private
+   */
+  _optionalFileExists (filePath) {
+    filePath = path.extname(filePath) ? filePath : `${filePath}.js`
+
+    try {
+      fs.accessSync(filePath, fs.constants.R_OK)
+      return true
+    } catch (error) {
+      return false
+    }
+  }
+
+  /**
    * Load all the files that are supposed to be preloaded
    *
    * @method _loadPreLoadFiles
@@ -364,13 +388,14 @@ class Ignitor {
     debug('optional set %j', this._optionals)
 
     this._preLoadFiles.forEach((file) => {
-      try {
-        const filePath = path.isAbsolute(file) ? file : path.join(this._appRoot, file)
+      const filePath = path.isAbsolute(file) ? file : path.join(this._appRoot, file)
+
+      /**
+       * Require file when it's not optional or when optional
+       * file exists
+       */
+      if (!this._isOptional(file) || this._optionalFileExists(filePath)) {
         require(filePath)
-      } catch (error) {
-        if (error.code !== 'MODULE_NOT_FOUND' || !this._isOptional(file)) {
-          throw error
-        }
       }
     })
 
