@@ -445,4 +445,20 @@ test.group('Ignitor', (group) => {
       assert.equal(error.code, 'MODULE_NOT_FOUND')
     }
   })
+
+  test('load hooks file when it exists', async (assert) => {
+    assert.plan(1)
+    await fs.outputFile(path.join(__dirname, './start/hooks.js'), `
+      global.hooksLoaded = true
+    `)
+
+    const ignitor = new Ignitor(fold)
+    ignitor.appRoot(path.join(__dirname, './'))
+    ignitor._loadHooksFileIfAny()
+
+    assert.isTrue(global.hooksLoaded)
+
+    await fs.remove(path.join(__dirname, './start/hooks.js'))
+    delete global.hooksLoaded
+  })
 })
