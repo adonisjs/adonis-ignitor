@@ -689,11 +689,23 @@ class Ignitor {
       process.env.NODE_ENV = 'testing'
     }
 
+    this._callHooks('before', 'aceCommand')
+
     this.loadCommands()
     await this.fire()
+
     const ace = require(path.join(this._appRoot, '/node_modules/@adonisjs/ace'))
     ace.wireUpWithCommander()
     const version = this._packageFile['adonis-version'] || 'NA'
+
+    /**
+     * Fire after `aceCommand` hook, before process goes
+     * down.
+     */
+    process.once('beforeExit', () => {
+      this._callHooks('after', 'aceCommand')
+    })
+
     ace.invoke({ version })
   }
 }
