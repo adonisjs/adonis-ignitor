@@ -222,14 +222,12 @@ class Ignitor {
    */
   _setupExceptionsHandler () {
     const handleRelativePath = `${DIRECTORIES['exceptions']}/Handler`
-    try {
-      require(path.join(this._appRoot, 'app', handleRelativePath))
+    const filePath = path.join(this._appRoot, 'app', handleRelativePath)
+
+    if (this._fileExists(filePath)) {
       debug('using %s for handling exceptions', `${this.appNamespace}/${handleRelativePath}`)
       this._fold.ioc.use('Adonis/Src/Exception').bind('*', `${this.appNamespace}/${handleRelativePath}`)
-    } catch (error) {
-      if (error.code !== 'MODULE_NOT_FOUND') {
-        throw error
-      }
+    } else {
       debug('using %s for handling exceptions', '@provider:Adonis/Exceptions/Handler')
       this._fold.ioc.use('Adonis/Src/Exception').bind('*', '@provider:Adonis/Exceptions/Handler')
     }
@@ -353,7 +351,7 @@ class Ignitor {
    * Returns a boolean telling whether a file exists
    * or not
    *
-   * @method _optionalFileExists
+   * @method _fileExists
    *
    * @param  {String}            filePath
    *
@@ -361,7 +359,7 @@ class Ignitor {
    *
    * @private
    */
-  _optionalFileExists (filePath) {
+  _fileExists (filePath) {
     filePath = path.extname(filePath) ? filePath : `${filePath}.js`
 
     try {
@@ -393,7 +391,7 @@ class Ignitor {
        * Require file when it's not optional or when optional
        * file exists
        */
-      if (!this._isOptional(file) || this._optionalFileExists(filePath)) {
+      if (!this._isOptional(file) || this._fileExists(filePath)) {
         require(filePath)
       }
     })
@@ -411,12 +409,9 @@ class Ignitor {
    * @private
    */
   _loadHooksFileIfAny () {
-    try {
-      return require(path.join(this._appRoot, 'start/hooks.js'))
-    } catch (error) {
-      if (error.code !== 'MODULE_NOT_FOUND') {
-        throw error
-      }
+    const filePath = path.join(this._appRoot, 'start/hooks.js')
+    if (this._fileExists(filePath)) {
+      require(path.join(this._appRoot, 'start/hooks.js'))
     }
   }
 
