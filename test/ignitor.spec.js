@@ -376,7 +376,7 @@ test.group('Ignitor', (group) => {
       listen (h, p, cb) { cb() }
       getInstance () {
         return {
-          once () {}
+          once (event, cb) { cb() }
         }
       }
     }
@@ -427,10 +427,11 @@ test.group('Ignitor', (group) => {
       return server
     })
 
+    server.close()
     assert.deepEqual(customInstance, server)
   })
 
-  test('do not swallow errors in preloading files', async (assert) => {
+  test('do not swallow errors in preloading files', (assert) => {
     assert.plan(1)
 
     const ignitor = new Ignitor(fold)

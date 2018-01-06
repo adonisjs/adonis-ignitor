@@ -11,7 +11,6 @@
 
 const debug = require('debug')('adonis:ignitor')
 const path = require('path')
-const exitHook = require('exit-hook')
 const fs = require('fs')
 
 const Helpers = require('../Helpers')
@@ -494,7 +493,7 @@ class Ignitor {
     /**
      * Gracefully closing http server
      */
-    exitHook(() => {
+    process.on('SIGTERM', () => {
       const Server = this._fold.ioc.use('Adonis/Src/Server')
       Server.getInstance().once('close', function () {
         process.exit(0)
