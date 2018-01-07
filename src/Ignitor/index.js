@@ -428,7 +428,7 @@ class Ignitor {
     this._callHooks('before', 'registerCommands')
 
     const { commands } = this._getAppAttributes()
-    const ace = require(path.join(this._appRoot, '/node_modules/@adonisjs/ace'))
+    const ace = require('@adonisjs/ace')
     commands.forEach((command) => ace.addCommand(command))
 
     this._callHooks('after', 'registerCommands')
@@ -694,7 +694,7 @@ class Ignitor {
     this.loadCommands()
     await this.fire()
 
-    const ace = require(path.join(this._appRoot, '/node_modules/@adonisjs/ace'))
+    const ace = require('@adonisjs/ace')
     ace.wireUpWithCommander()
     const version = this._packageFile['adonis-version'] || 'NA'
 
