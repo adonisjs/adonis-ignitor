@@ -299,59 +299,73 @@ test.group('Ignitor', (group) => {
   test('load ace commands when loadCommands method is called', async (assert) => {
     assert.plan(1)
     const ignitor = new Ignitor(fold)
-    ignitor.appRoot(path.join(__dirname, './'))
+    ignitor
+      .appRoot(path.join(__dirname, '../'))
+      .appFile('test/start/app.js')
+
     ignitor._preLoadFiles = []
-    const appFile = require(path.join(__dirname, ignitor._appFile))
-    appFile.aceProviders = ['Adonis/Src/Command']
-    try {
-      await ignitor.loadCommands().fire()
-    } catch ({ message }) {
-      assert.equal(message, `Cannot find module 'Adonis/Src/Command'`)
-    }
+
+    const appFile = require(path.join(__dirname, '../', ignitor._appFile))
+    appFile.commands = ['App/Commands/Greet']
+
+    fold.ioc.fake('App/Commands/Greet', function () {
+      assert.isTrue(true)
+
+      const { Command } = require('@adonisjs/ace')
+      return class FooCommand extends Command {
+        static get signature () {
+          return 'foo'
+        }
+      }
+    })
+
+    await ignitor.loadCommands().fire()
   })
 
-  test('setup exception handler to adonis provider when there is no exceptions handler', (assert) => {
+  test('setup exception handler to base exceptions handler when custom one doesnt exists', (assert) => {
     const ignitor = new Ignitor(fold)
     ignitor.appRoot(path.join(__dirname, './'))
-    assert.plan(2)
+    assert.plan(1)
 
-    class Exception {
-      bind (name, handler) {
-        assert.equal(name, '*')
-        assert.equal(handler, '@provider:Adonis/Exceptions/Handler')
+    class BaseHandler {
+      handle () {}
+      report () {}
+    }
+    fold.ioc.fake('Adonis/Exceptions/BaseExceptionHandler', () => BaseHandler)
+
+    class Server {
+      setExceptionsHandler (handler) {
+        assert.deepEqual(handler, BaseHandler)
       }
     }
 
-    fold.ioc.fake('Adonis/Src/Exception', function () {
-      return new Exception()
-    })
-
     ignitor._setPackageFile()
     ignitor._setupResolver()
-    ignitor._setupExceptionsHandler()
+    ignitor._setupExceptionsHandler(new Server())
   })
 
   test('setup exception handler to global handler when defined', async (assert) => {
     const ignitor = new Ignitor(fold)
 
     ignitor.appRoot(path.join(__dirname, './'))
-    assert.plan(2)
-    await fs.outputFile(path.join(__dirname, './app/Exceptions/Handler.js'), 'module.exports = {}')
+    assert.plan(1)
 
-    class Exception {
-      bind (name, handler) {
-        assert.equal(name, '*')
-        assert.equal(handler, 'App/Exceptions/Handler')
+    await fs.outputFile(path.join(__dirname, './app/Exceptions/Handler.js'), `
+      module.exports = class CustomHandler {
+        handle () {}
+        report () {}
+      }
+    `)
+
+    class Server {
+      setExceptionsHandler (handler) {
+        assert.equal(handler.name, 'CustomHandler')
       }
     }
 
-    fold.ioc.fake('Adonis/Src/Exception', function () {
-      return new Exception()
-    })
-
     ignitor._setPackageFile()
     ignitor._registerAutoloadedDirectories()
-    ignitor._setupExceptionsHandler()
+    ignitor._setupExceptionsHandler(new Server())
     await fs.remove(path.join(__dirname, './app'))
   })
 
@@ -379,7 +393,14 @@ test.group('Ignitor', (group) => {
           once (event, cb) { cb() }
         }
       }
+      setExceptionsHandler () {}
     }
+
+    class BaseHandler {
+      handle () {}
+      report () {}
+    }
+    fold.ioc.fake('Adonis/Exceptions/BaseExceptionHandler', () => BaseHandler)
 
     const events = []
     hooks.before.httpServer(() => {
@@ -414,7 +435,15 @@ test.group('Ignitor', (group) => {
       handle () {}
 
       listen (h, p, cb) { cb() }
+
+      setExceptionsHandler () {}
     }
+
+    class BaseHandler {
+      handle () {}
+      report () {}
+    }
+    fold.ioc.fake('Adonis/Exceptions/BaseExceptionHandler', () => BaseHandler)
 
     fold.ioc.fake('Adonis/Src/Server', () => new Server())
     fold.ioc.fake('Adonis/Src/Env', () => new Env())

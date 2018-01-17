@@ -36,7 +36,6 @@ const DIRECTORIES = {
   modelTraits: 'Models/Traits',
   listeners: 'Listeners',
   exceptions: 'Exceptions',
-  exceptionHandlers: 'Exceptions/Handlers',
   middleware: 'Middleware',
   commands: 'Commands',
   validators: 'Validators'
@@ -206,30 +205,28 @@ class Ignitor {
   }
 
   /**
-   * This method sets the global exception handler for handling exceptions.
-   * By default it will rely on a global exceptions handler defined in
-   * `Exceptions/Handlers/Global.js` file, if not provided, fallsback
-   * to `@provider:Adonis/Exception/Handler`.
-   *
-   * Also this operation should happen before loading the kernel.js file.
-   * Since that file allows overriding the exceptions handler.
+   * If exception handler inside `app/Exceptions/Handler` exists, then we will
+   * bind it to the server to handle exceptions, otherwise we rely on base
+   * exception handler.
    *
    * @method _setupExceptionsHandler
+   *
+   * @param {Server} Server
    *
    * @return {void}
    *
    * @private
    */
-  _setupExceptionsHandler () {
+  _setupExceptionsHandler (Server) {
     const handleRelativePath = `${DIRECTORIES['exceptions']}/Handler`
     const filePath = path.join(this._appRoot, 'app', handleRelativePath)
 
     if (this._fileExists(filePath)) {
       debug('using %s for handling exceptions', `${this.appNamespace}/${handleRelativePath}`)
-      this._fold.ioc.use('Adonis/Src/Exception').bind('*', `${this.appNamespace}/${handleRelativePath}`)
+      Server.setExceptionsHandler(this._fold.ioc.use(`${this.appNamespace}/${handleRelativePath}`))
     } else {
       debug('using %s for handling exceptions', '@provider:Adonis/Exceptions/Handler')
-      this._fold.ioc.use('Adonis/Src/Exception').bind('*', '@provider:Adonis/Exceptions/Handler')
+      Server.setExceptionsHandler(this._fold.ioc.use('Adonis/Exceptions/BaseExceptionHandler'))
     }
   }
 
@@ -244,9 +241,7 @@ class Ignitor {
    * @private
    */
   _registerHelpers () {
-    this._fold.ioc.singleton('Adonis/Src/Helpers', () => {
-      return new Helpers(this._appRoot)
-    })
+    this._fold.ioc.singleton('Adonis/Src/Helpers', () => new Helpers(this._appRoot))
     this._fold.ioc.alias('Adonis/Src/Helpers', 'Helpers')
     debug('registered helpers')
   }
@@ -454,6 +449,11 @@ class Ignitor {
     const Env = this._fold.ioc.use('Adonis/Src/Env')
 
     /**
+     * Define the exception handler to be used by the HTTP server
+     */
+    this._setupExceptionsHandler(Server)
+
+    /**
      * If a custom http instance is defined, set it
      * on the server provider.
      */
@@ -470,29 +470,75 @@ class Ignitor {
       if (typeof (process.emit) === 'function') {
         process.emit('adonis:server:start')
       }
+      this._listenForSigEvents()
       this._callHooks('after', 'httpServer')
     })
   }
 
+  /* istanbul ignore next */
   /**
-   * Binds the listener to gracefully shutdown
-   * the server
+   * Invokes the ace command
    *
-   * @method _gracefullyShutDown
+   * @method _invokeAce
    *
    * @return {void}
    *
    * @private
    */
-  _gracefullyShutDown () {
+  _invokeAce () {
+    this._callHooks('before', 'aceCommand')
+
+    const ace = require(path.join(this._appRoot, '/node_modules/@adonisjs/ace'))
+    ace.wireUpWithCommander()
+
+    /**
+     * Fire after `aceCommand` hook, before process goes down.
+     */
+    process.once('beforeExit', () => (this._callHooks('after', 'aceCommand')))
+    ace.invoke({ version: this._packageFile['adonis-version'] || 'NA' })
+  }
+
+  /* istanbul ignore next */
+  /**
+   * Binds the listener to gracefully shutdown
+   * the server
+   *
+   * @method _listenForSigEvents
+   *
+   * @return {void}
+   *
+   * @private
+   */
+  _listenForSigEvents () {
     /**
      * Gracefully closing http server
      */
     process.on('SIGTERM', () => {
       const Server = this._fold.ioc.use('Adonis/Src/Server')
-      Server.getInstance().once('close', function () {
-        process.exit(0)
-      })
+      debug('Gracefully stopping http server')
+      Server.close(process.exit)
+    })
+  }
+
+  /* istanbul ignore next */
+  /**
+   * Binds a listener for `unhandledRejection` to make sure all promises
+   * rejections are handled by the app
+   *
+   * @method _listenForUnhandledRejection
+   *
+   * @return {void}
+   *
+   * @private
+   */
+  _listenForUnhandledRejection () {
+    process.once('unhandledRejection', (response) => {
+      try {
+        this._fold.ioc.use('Adonis/Src/Logger').warning(WARNING_MESSAGE)
+      } catch (error) {
+        console.warn(WARNING_MESSAGE)
+      }
+      console.error(response)
     })
   }
 
@@ -621,27 +667,45 @@ class Ignitor {
    * @throws {Error} If app root has not be defined
    */
   async fire () {
-    process.once('unhandledRejection', (response) => {
-      try {
-        this._fold.ioc.use('Adonis/Src/Logger').warning(WARNING_MESSAGE)
-      } catch (error) {
-        console.warn(WARNING_MESSAGE)
-      }
-      console.error(response)
-    })
+    this._listenForUnhandledRejection()
 
     if (!this._appRoot) {
       throw new Error('Cannot start http server, make sure to register the app root inside server.js file')
     }
 
+    /**
+     * Load the package.json file
+     */
     this._setPackageFile()
+
+    /**
+     * Registers directories to be autoloaded defined
+     * under `package.json` file.
+     */
     this._registerAutoloadedDirectories()
+
+    /**
+     * Register the helpers binding. So that all providers must have
+     * access to it.
+     */
     this._registerHelpers()
+
+    /**
+     * Registering hooks, so that end user can bind hooks callbacks
+     */
     this._loadHooksFileIfAny()
+
+    /**
+     * Register + Boot providers
+     */
     this._registerProviders()
     await this._bootProviders()
+
+    /**
+     * Define aliases by reading them from the `start/app.js` file, so that
+     * pre-defined aliases are overridden by the user defined aliases.
+     */
     this._defineAliases()
-    this._setupExceptionsHandler()
 
     /**
      * Register commands when loadCommands is set to true.
@@ -650,6 +714,9 @@ class Ignitor {
       this._registerCommands()
     }
 
+    /**
+     * Finally load the files to be preloaded
+     */
     this._loadPreLoadFiles()
   }
 
@@ -665,7 +732,6 @@ class Ignitor {
   async fireHttpServer (httpServerCallback) {
     await this.fire()
     await this._startHttpServer(httpServerCallback)
-    this._gracefullyShutDown()
   }
 
   /**
@@ -689,24 +755,9 @@ class Ignitor {
       process.env.NODE_ENV = 'testing'
     }
 
-    this._callHooks('before', 'aceCommand')
-
     this.loadCommands()
     await this.fire()
-
-    const ace = require(path.join(this._appRoot, '/node_modules/@adonisjs/ace'))
-    ace.wireUpWithCommander()
-    const version = this._packageFile['adonis-version'] || 'NA'
-
-    /**
-     * Fire after `aceCommand` hook, before process goes
-     * down.
-     */
-    process.once('beforeExit', () => {
-      this._callHooks('after', 'aceCommand')
-    })
-
-    ace.invoke({ version })
+    this._invokeAce()
   }
 }
 
