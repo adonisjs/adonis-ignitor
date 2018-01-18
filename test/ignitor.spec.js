@@ -334,7 +334,7 @@ test.group('Ignitor', (group) => {
     fold.ioc.fake('Adonis/Exceptions/BaseExceptionHandler', () => BaseHandler)
 
     class Server {
-      setExceptionsHandler (handler) {
+      setExceptionHandler (handler) {
         assert.deepEqual(handler, BaseHandler)
       }
     }
@@ -358,7 +358,7 @@ test.group('Ignitor', (group) => {
     `)
 
     class Server {
-      setExceptionsHandler (handler) {
+      setExceptionHandler (handler) {
         assert.equal(handler.name, 'CustomHandler')
       }
     }
@@ -393,7 +393,7 @@ test.group('Ignitor', (group) => {
           once (event, cb) { cb() }
         }
       }
-      setExceptionsHandler () {}
+      setExceptionHandler () {}
     }
 
     class BaseHandler {
@@ -436,7 +436,7 @@ test.group('Ignitor', (group) => {
 
       listen (h, p, cb) { cb() }
 
-      setExceptionsHandler () {}
+      setExceptionHandler () {}
     }
 
     class BaseHandler {

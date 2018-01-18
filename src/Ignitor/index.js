@@ -223,10 +223,10 @@ class Ignitor {
 
     if (this._fileExists(filePath)) {
       debug('using %s for handling exceptions', `${this.appNamespace}/${handleRelativePath}`)
-      Server.setExceptionsHandler(this._fold.ioc.use(`${this.appNamespace}/${handleRelativePath}`))
+      Server.setExceptionHandler(this._fold.ioc.use(`${this.appNamespace}/${handleRelativePath}`))
     } else {
-      debug('using %s for handling exceptions', '@provider:Adonis/Exceptions/Handler')
-      Server.setExceptionsHandler(this._fold.ioc.use('Adonis/Exceptions/BaseExceptionHandler'))
+      debug('using %s for handling exceptions', 'Adonis/Exceptions/BaseExceptionHandler')
+      Server.setExceptionHandler(this._fold.ioc.use('Adonis/Exceptions/BaseExceptionHandler'))
     }
   }
 
