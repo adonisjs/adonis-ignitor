@@ -90,7 +90,7 @@ test.group('Ignitor', (group) => {
     assert.plan(1)
     const ignitor = new Ignitor()
     try {
-      await ignitor.fireHttpServer()
+      await ignitor.fire()
     } catch ({ message }) {
       assert.equal(message, 'Cannot start http server, make sure to register the app root inside server.js file')
     }
