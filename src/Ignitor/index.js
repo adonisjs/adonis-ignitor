@@ -12,6 +12,8 @@
 const debug = require('debug')('adonis:ignitor')
 const path = require('path')
 const fs = require('fs')
+const Youch = require('youch')
+const forTerminal = require('youch-terminal')
 
 const Helpers = require('../Helpers')
 const hooks = require('../Hooks')
@@ -495,6 +497,15 @@ class Ignitor {
      * Fire after `aceCommand` hook, before process goes down.
      */
     process.once('beforeExit', () => (this._callHooks('after', 'aceCommand')))
+
+    /**
+     * Listen for command errors
+     */
+    ace.onError(async (error) => {
+      const output = await new Youch(error, {}).toJSON()
+      console.log(forTerminal(output))
+    })
+
     ace.invoke({ version: this._packageFile['adonis-version'] || 'NA' })
   }
 
@@ -730,8 +741,13 @@ class Ignitor {
    * @return {void}
    */
   async fireHttpServer (httpServerCallback) {
-    await this.fire()
-    await this._startHttpServer(httpServerCallback)
+    try {
+      await this.fire()
+      await this._startHttpServer(httpServerCallback)
+    } catch (error) {
+      const output = await new Youch(error, {}).toJSON()
+      console.log(forTerminal(output))
+    }
   }
 
   /**
