@@ -1,3 +1,22 @@
+<a name="2.0.0"></a>
+# [2.0.0](https://github.com/adonisjs/adonis-ignitor/compare/v1.0.14...v2.0.0) (2018-01-31)
+
+
+### Bug Fixes
+
+* **exitHook:** remove exit-hook and instead listen for SIGTERM only ([a431176](https://github.com/adonisjs/adonis-ignitor/commit/a431176))
+* **hooks:** fire before and after aceCommand hooks ([cbc80e5](https://github.com/adonisjs/adonis-ignitor/commit/cbc80e5)), closes [#6](https://github.com/adonisjs/adonis-ignitor/issues/6)
+* **ignitor:** call setExceptionHandler over setExceptionsHandler ([5b6d509](https://github.com/adonisjs/adonis-ignitor/commit/5b6d509))
+* **ignitor:** do not swallow errors inside preload files ([6e7027d](https://github.com/adonisjs/adonis-ignitor/commit/6e7027d)), closes [#5](https://github.com/adonisjs/adonis-ignitor/issues/5)
+* **ignitor:** remove all try/catch checks for file existence ([0f3c055](https://github.com/adonisjs/adonis-ignitor/commit/0f3c055))
+
+
+### Features
+
+* **ignitor:** show app errors beautifully on terminal ([ab232ec](https://github.com/adonisjs/adonis-ignitor/commit/ab232ec))
+
+
+
 <a name="1.0.14"></a>
 ## [1.0.14](https://github.com/adonisjs/adonis-ignitor/compare/v1.0.13...v1.0.14) (2017-10-31)
 
