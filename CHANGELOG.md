@@ -1,3 +1,13 @@
+<a name="2.0.3"></a>
+## [2.0.3](https://github.com/adonisjs/adonis-ignitor/compare/v2.0.2...v2.0.3) (2018-02-07)
+
+
+### Bug Fixes
+
+* **fireAce:** wrap inside try/catch and pretty print errors ([2d1027f](https://github.com/adonisjs/adonis-ignitor/commit/2d1027f))
+
+
+
 <a name="2.0.2"></a>
 ## [2.0.2](https://github.com/adonisjs/adonis-ignitor/compare/v2.0.1...v2.0.2) (2018-02-07)
 
