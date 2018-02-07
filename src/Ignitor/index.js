@@ -58,8 +58,7 @@ class Ignitor {
       'start/routes',
       'start/events',
       'start/socket',
-      'start/kernel',
-      'database/factory'
+      'start/kernel'
     ]
 
     /**
@@ -788,6 +787,12 @@ class Ignitor {
     if (process.argv.slice(2)[0] === 'test') {
       process.env.NODE_ENV = 'testing'
     }
+
+    /**
+     * Load database/factory.js file when loading
+     * ace commands
+     */
+    this.preLoad('database/factory')
 
     this.loadCommands()
     await this.fire()

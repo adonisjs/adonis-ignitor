@@ -1,3 +1,13 @@
+<a name="2.0.2"></a>
+## [2.0.2](https://github.com/adonisjs/adonis-ignitor/compare/v2.0.1...v2.0.2) (2018-02-07)
+
+
+### Bug Fixes
+
+* **ignitor:** load factory.js during ace command only ([fb3577f](https://github.com/adonisjs/adonis-ignitor/commit/fb3577f)), closes [#8](https://github.com/adonisjs/adonis-ignitor/issues/8)
+
+
+
 <a name="2.0.1"></a>
 ## [2.0.1](https://github.com/adonisjs/adonis-ignitor/compare/v2.0.0...v2.0.1) (2018-02-07)
 
