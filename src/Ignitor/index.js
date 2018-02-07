@@ -444,6 +444,7 @@ class Ignitor {
   async _printError (error) {
     const output = await new Youch(error, {}).toJSON()
     console.log(forTerminal(output))
+    process.exit(1)
   }
 
   /**
@@ -762,8 +763,7 @@ class Ignitor {
       await this.fire()
       await this._startHttpServer(httpServerCallback)
     } catch (error) {
-      const output = await new Youch(error, {}).toJSON()
-      console.log(forTerminal(output))
+      this._printError(error)
     }
   }
 
@@ -794,9 +794,13 @@ class Ignitor {
      */
     this.preLoad('database/factory')
 
-    this.loadCommands()
-    await this.fire()
-    this._invokeAce()
+    try {
+      this.loadCommands()
+      await this.fire()
+      this._invokeAce()
+    } catch (error) {
+      this._printError(error)
+    }
   }
 }
 

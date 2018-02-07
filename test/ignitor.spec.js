@@ -256,6 +256,11 @@ test.group('Ignitor', (group) => {
     ignitor.appRoot(path.join(__dirname, './'))
     ignitor._preLoadFiles = []
     const appFile = require(path.join(__dirname, ignitor._appFile))
+
+    ignitor._printError = function (error) {
+      throw error
+    }
+
     appFile.aceProviders = ['Adonis/Src/Command']
     try {
       await ignitor.fireAce()
