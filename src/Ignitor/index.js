@@ -432,6 +432,22 @@ class Ignitor {
   }
 
   /**
+   * Pretty prints the error to the terminal
+   *
+   * @method _printError
+   *
+   * @param  {Object}    error
+   *
+   * @return {void}
+   *
+   * @private
+   */
+  async _printError (error) {
+    const output = await new Youch(error, {}).toJSON()
+    console.log(forTerminal(output))
+  }
+
+  /**
    * Start the http server using server and env
    * provider
    *
@@ -468,7 +484,12 @@ class Ignitor {
     /**
      * Start the server
      */
-    Server.listen(Env.get('HOST'), Env.get('PORT'), () => {
+    Server.listen(Env.get('HOST'), Env.get('PORT'), (error) => {
+      if (error) {
+        this._printError(error)
+        return
+      }
+
       if (typeof (process.emit) === 'function') {
         process.emit('adonis:server:start')
       }
@@ -501,10 +522,7 @@ class Ignitor {
     /**
      * Listen for command errors
      */
-    ace.onError(async (error) => {
-      const output = await new Youch(error, {}).toJSON()
-      console.log(forTerminal(output))
-    })
+    ace.onError((error) => (this._printError(error)))
 
     ace.invoke({ version: this._packageFile['adonis-version'] || 'NA' })
   }
