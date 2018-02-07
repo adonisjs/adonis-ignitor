@@ -206,32 +206,6 @@ class Ignitor {
   }
 
   /**
-   * If exception handler inside `app/Exceptions/Handler` exists, then we will
-   * bind it to the server to handle exceptions, otherwise we rely on base
-   * exception handler.
-   *
-   * @method _setupExceptionsHandler
-   *
-   * @param {Server} Server
-   *
-   * @return {void}
-   *
-   * @private
-   */
-  _setupExceptionsHandler (Server) {
-    const handleRelativePath = `${DIRECTORIES['exceptions']}/Handler`
-    const filePath = path.join(this._appRoot, 'app', handleRelativePath)
-
-    if (this._fileExists(filePath)) {
-      debug('using %s for handling exceptions', `${this.appNamespace}/${handleRelativePath}`)
-      Server.setExceptionHandler(this._fold.ioc.use(`${this.appNamespace}/${handleRelativePath}`))
-    } else {
-      debug('using %s for handling exceptions', 'Adonis/Exceptions/BaseExceptionHandler')
-      Server.setExceptionHandler(this._fold.ioc.use('Adonis/Exceptions/BaseExceptionHandler'))
-    }
-  }
-
-  /**
    * Registers the helpers module to the IoC container.
    * Required by a lot of providers before hand.
    *
@@ -242,7 +216,12 @@ class Ignitor {
    * @private
    */
   _registerHelpers () {
-    this._fold.ioc.singleton('Adonis/Src/Helpers', () => new Helpers(this._appRoot))
+    this._fold.ioc.singleton('Adonis/Src/Helpers', () => {
+      const helpers = new Helpers(this._appRoot)
+      helpers.appDirectories(DIRECTORIES)
+      return helpers
+    })
+
     this._fold.ioc.alias('Adonis/Src/Helpers', 'Helpers')
     debug('registered helpers')
   }
@@ -465,11 +444,6 @@ class Ignitor {
 
     const Server = this._fold.ioc.use('Adonis/Src/Server')
     const Env = this._fold.ioc.use('Adonis/Src/Env')
-
-    /**
-     * Define the exception handler to be used by the HTTP server
-     */
-    this._setupExceptionsHandler(Server)
 
     /**
      * If a custom http instance is defined, set it
