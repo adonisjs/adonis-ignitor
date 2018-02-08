@@ -104,7 +104,7 @@ test.group('Helpers', (group) => {
 
   test('freeze object passed to appDirectories', (assert) => {
     this.helpers.appDirectories({ foo: 'bar' })
-    const fn = () => this.helpers.directories.bar = 'foo'
+    const fn = () => (this.helpers.directories.bar = 'foo')
     assert.throw(fn, 'Cannot add property bar, object is not extensible')
   })
 })
