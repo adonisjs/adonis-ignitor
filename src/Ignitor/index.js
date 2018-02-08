@@ -216,12 +216,7 @@ class Ignitor {
    * @private
    */
   _registerHelpers () {
-    this._fold.ioc.singleton('Adonis/Src/Helpers', () => {
-      const helpers = new Helpers(this._appRoot)
-      helpers.appDirectories(DIRECTORIES)
-      return helpers
-    })
-
+    this._fold.ioc.singleton('Adonis/Src/Helpers', () => new Helpers(this._appRoot))
     this._fold.ioc.alias('Adonis/Src/Helpers', 'Helpers')
     debug('registered helpers')
   }

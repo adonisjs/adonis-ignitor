@@ -334,14 +334,6 @@ test.group('Ignitor', (group) => {
     assert.isDefined(fold.ioc.use('Adonis/Src/Helpers'))
   })
 
-  test('pass directories to helpers', async (assert) => {
-    const ignitor = new Ignitor(fold)
-    ignitor.appRoot(path.join(__dirname, './'))
-    await ignitor.fire()
-    assert.isDefined(fold.ioc.use('Adonis/Src/Helpers'))
-    assert.equal(fold.ioc.use('Adonis/Src/Helpers').directories.exceptions, 'Exceptions')
-  })
-
   test('define alias for helpers module', async (assert) => {
     const ignitor = new Ignitor(fold)
     ignitor.appRoot(path.join(__dirname, './'))

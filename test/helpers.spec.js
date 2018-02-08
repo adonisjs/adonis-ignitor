@@ -101,10 +101,4 @@ test.group('Helpers', (group) => {
     const packageFile = await this.helpers.promisify(fs.readFile)(path.join(__dirname, '../package.json'))
     assert.equal(JSON.parse(packageFile).name, '@adonisjs/ignitor')
   })
-
-  test('freeze object passed to appDirectories', (assert) => {
-    this.helpers.appDirectories({ foo: 'bar' })
-    const fn = () => (this.helpers.directories.bar = 'foo')
-    assert.throw(fn, 'Cannot add property bar, object is not extensible')
-  })
 })

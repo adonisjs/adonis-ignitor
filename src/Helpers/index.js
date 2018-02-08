@@ -27,20 +27,6 @@ const pify = require('pify')
 class Helpers {
   constructor (appRoot) {
     this._appRoot = appRoot
-    this.directories = {}
-  }
-
-  /**
-   * Set app directories
-   *
-   * @method appDirectories
-   *
-   * @param  {Object}       directories
-   *
-   * @return {void}
-   */
-  appDirectories (directories) {
-    this.directories = Object.freeze(Object.assign({}, directories))
   }
 
   /**
