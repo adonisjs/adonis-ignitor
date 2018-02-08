@@ -327,58 +327,19 @@ test.group('Ignitor', (group) => {
     await ignitor.loadCommands().fire()
   })
 
-  test('setup exception handler to base exceptions handler when custom one doesnt exists', (assert) => {
-    const ignitor = new Ignitor(fold)
-    ignitor.appRoot(path.join(__dirname, './'))
-    assert.plan(1)
-
-    class BaseHandler {
-      handle () {}
-      report () {}
-    }
-    fold.ioc.fake('Adonis/Exceptions/BaseExceptionHandler', () => BaseHandler)
-
-    class Server {
-      setExceptionHandler (handler) {
-        assert.deepEqual(handler, BaseHandler)
-      }
-    }
-
-    ignitor._setPackageFile()
-    ignitor._setupResolver()
-    ignitor._setupExceptionsHandler(new Server())
-  })
-
-  test('setup exception handler to global handler when defined', async (assert) => {
-    const ignitor = new Ignitor(fold)
-
-    ignitor.appRoot(path.join(__dirname, './'))
-    assert.plan(1)
-
-    await fs.outputFile(path.join(__dirname, './app/Exceptions/Handler.js'), `
-      module.exports = class CustomHandler {
-        handle () {}
-        report () {}
-      }
-    `)
-
-    class Server {
-      setExceptionHandler (handler) {
-        assert.equal(handler.name, 'CustomHandler')
-      }
-    }
-
-    ignitor._setPackageFile()
-    ignitor._registerAutoloadedDirectories()
-    ignitor._setupExceptionsHandler(new Server())
-    await fs.remove(path.join(__dirname, './app'))
-  })
-
   test('register helpers module', async (assert) => {
     const ignitor = new Ignitor(fold)
     ignitor.appRoot(path.join(__dirname, './'))
     await ignitor.fire()
     assert.isDefined(fold.ioc.use('Adonis/Src/Helpers'))
+  })
+
+  test('pass directories to helpers', async (assert) => {
+    const ignitor = new Ignitor(fold)
+    ignitor.appRoot(path.join(__dirname, './'))
+    await ignitor.fire()
+    assert.isDefined(fold.ioc.use('Adonis/Src/Helpers'))
+    assert.equal(fold.ioc.use('Adonis/Src/Helpers').directories.exceptions, 'Exceptions')
   })
 
   test('define alias for helpers module', async (assert) => {

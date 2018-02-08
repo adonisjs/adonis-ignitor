@@ -1,3 +1,13 @@
+<a name="2.0.4"></a>
+## [2.0.4](https://github.com/adonisjs/adonis-ignitor/compare/v2.0.3...v2.0.4) (2018-02-08)
+
+
+### Features
+
+* **helpers:** helpers now exposes directories ready only property ([b6e2e3c](https://github.com/adonisjs/adonis-ignitor/commit/b6e2e3c))
+
+
+
 <a name="2.0.3"></a>
 ## [2.0.3](https://github.com/adonisjs/adonis-ignitor/compare/v2.0.2...v2.0.3) (2018-02-07)
 
