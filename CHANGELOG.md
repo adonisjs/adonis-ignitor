@@ -1,3 +1,13 @@
+<a name="2.0.5"></a>
+## [2.0.5](https://github.com/adonisjs/adonis-ignitor/compare/v2.0.4...v2.0.5) (2018-02-08)
+
+
+### Reverts
+
+* **helpers:** remove the concept of sharing directories ([4b73862](https://github.com/adonisjs/adonis-ignitor/commit/4b73862))
+
+
+
 <a name="2.0.4"></a>
 ## [2.0.4](https://github.com/adonisjs/adonis-ignitor/compare/v2.0.3...v2.0.4) (2018-02-08)
 
