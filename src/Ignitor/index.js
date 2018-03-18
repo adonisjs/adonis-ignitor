@@ -58,7 +58,8 @@ class Ignitor {
       'start/routes',
       'start/events',
       'start/socket',
-      'start/kernel'
+      'start/kernel',
+      'start/wsKernel'
     ]
 
     /**
@@ -70,6 +71,7 @@ class Ignitor {
       'start/events',
       'start/socket',
       'start/kernel',
+      'start/wsKernel',
       'database/factory'
     ]
 
@@ -79,6 +81,14 @@ class Ignitor {
      * @type {String}
      */
     this._appFile = 'start/app.js'
+
+    /**
+     * Ws server reference to run it
+     */
+    this._wsServer = {
+      run: false,
+      customHttpServer: null
+    }
 
     /**
      * The app namespace registered with resolver
@@ -451,6 +461,13 @@ class Ignitor {
     }
 
     /**
+     * Run the Ws server when instructured
+     */
+    if (this._wsServer.run) {
+      this._startWsServer(this._wsServer.customHttpServer || Server.getInstance())
+    }
+
+    /**
      * Start the server
      */
     Server.listen(Env.get('HOST'), Env.get('PORT'), (error) => {
@@ -462,9 +479,25 @@ class Ignitor {
       if (typeof (process.emit) === 'function') {
         process.emit('adonis:server:start')
       }
+
       this._listenForSigEvents()
       this._callHooks('after', 'httpServer')
     })
+  }
+
+  /**
+   * Starts the websocket servers
+   *
+   * @method _startWsServer
+   *
+   * @param  {Http.Server}       httpServer
+   *
+   * @return {void}
+   *
+   * @private
+   */
+  _startWsServer (httpServer) {
+    this._fold.ioc.use('Adonis/Addons/Ws').listen(httpServer)
   }
 
   /* istanbul ignore next */
@@ -512,8 +545,17 @@ class Ignitor {
      * Gracefully closing http server
      */
     process.on('SIGTERM', () => {
-      const Server = this._fold.ioc.use('Adonis/Src/Server')
       debug('Gracefully stopping http server')
+
+      /**
+       * Also close the ws server
+       */
+      if (this._wsServer.run) {
+        const Ws = this._fold.ioc.use('Adonis/Addons/Ws')
+        Ws.close()
+      }
+
+      const Server = this._fold.ioc.use('Adonis/Src/Server')
       Server.close(process.exit)
     })
   }
@@ -716,6 +758,23 @@ class Ignitor {
      * Finally load the files to be preloaded
      */
     this._loadPreLoadFiles()
+  }
+
+  /**
+   * This method will instruct ignitor to run
+   * the websocket server along with the
+   * http server
+   *
+   * @method wsServer
+   *
+   * @param  {Http.Server} [httpServer]
+   *
+   * @chainable
+   */
+  wsServer (httpServer = null) {
+    this._wsServer.run = true
+    this._wsServer.customHttpServer = httpServer
+    return this
   }
 
   /**

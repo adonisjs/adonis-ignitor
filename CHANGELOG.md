@@ -1,3 +1,14 @@
+<a name="2.0.6"></a>
+## [2.0.6](https://github.com/adonisjs/adonis-ignitor/compare/v2.0.5...v2.0.6) (2018-03-18)
+
+
+### Features
+
+* **ignitor:** expose methods to run the Websocket server along with Http ([a39eb17](https://github.com/adonisjs/adonis-ignitor/commit/a39eb17))
+* **Ignitor:** optionally load wsKernel for websocket middleware ([5254f50](https://github.com/adonisjs/adonis-ignitor/commit/5254f50))
+
+
+
 <a name="2.0.5"></a>
 ## [2.0.5](https://github.com/adonisjs/adonis-ignitor/compare/v2.0.4...v2.0.5) (2018-02-08)
 
