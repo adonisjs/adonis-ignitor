@@ -58,7 +58,8 @@ class Ignitor {
       'start/routes',
       'start/events',
       'start/socket',
-      'start/kernel'
+      'start/kernel',
+      'start/wsKernel'
     ]
 
     /**
@@ -70,6 +71,7 @@ class Ignitor {
       'start/events',
       'start/socket',
       'start/kernel',
+      'start/wsKernel',
       'database/factory'
     ]
 
