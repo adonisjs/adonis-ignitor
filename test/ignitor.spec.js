@@ -448,4 +448,86 @@ test.group('Ignitor', (group) => {
     await fs.remove(path.join(__dirname, './start/hooks.js'))
     delete global.hooksLoaded
   })
+
+  test('call listen method on Ws server when instructed', async (assert) => {
+    assert.plan(1)
+
+    const ignitor = new Ignitor(fold)
+    ignitor._printError = function (error) {
+      throw error
+    }
+
+    class Server {
+      listen (h, p, cb) { cb() }
+      getInstance () {
+        return {
+          once (event, cb) { cb() }
+        }
+      }
+      setExceptionHandler () {}
+    }
+
+    class Ws {
+      listen (httpServer) {
+        assert.property(httpServer, 'once')
+      }
+    }
+
+    class BaseHandler {
+      handle () {}
+      report () {}
+    }
+
+    fold.ioc.fake('Adonis/Exceptions/BaseExceptionHandler', () => BaseHandler)
+    fold.ioc.fake('Adonis/Addons/Ws', () => new Ws())
+
+    fold.ioc.fake('Adonis/Src/Server', () => new Server())
+    fold.ioc.fake('Adonis/Src/Env', () => new Env())
+
+    ignitor.appRoot(path.join(__dirname, './'))
+    await ignitor.wsServer().fireHttpServer()
+  })
+
+  test('pass custom http instance to the websocket server', async (assert) => {
+    assert.plan(1)
+
+    const customServer = {
+      http: true
+    }
+
+    const ignitor = new Ignitor(fold)
+    ignitor._printError = function (error) {
+      throw error
+    }
+
+    class Server {
+      listen (h, p, cb) { cb() }
+      getInstance () {
+        return {
+          once (event, cb) { cb() }
+        }
+      }
+      setExceptionHandler () {}
+    }
+
+    class Ws {
+      listen (httpServer) {
+        assert.deepEqual(httpServer, customServer)
+      }
+    }
+
+    class BaseHandler {
+      handle () {}
+      report () {}
+    }
+
+    fold.ioc.fake('Adonis/Exceptions/BaseExceptionHandler', () => BaseHandler)
+    fold.ioc.fake('Adonis/Addons/Ws', () => new Ws())
+
+    fold.ioc.fake('Adonis/Src/Server', () => new Server())
+    fold.ioc.fake('Adonis/Src/Env', () => new Env())
+
+    ignitor.appRoot(path.join(__dirname, './'))
+    await ignitor.wsServer(customServer).fireHttpServer()
+  })
 })
