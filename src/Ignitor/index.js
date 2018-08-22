@@ -47,6 +47,7 @@ class Ignitor {
   constructor (fold) {
     this._fold = fold
     this._appRoot = null
+    this._modulesRoot = null
     this._loadCommands = false
 
     /**
@@ -408,7 +409,8 @@ class Ignitor {
     this._callHooks('before', 'registerCommands')
 
     const { commands } = this._getAppAttributes()
-    const ace = require(path.join(this._appRoot, '/node_modules/@adonisjs/ace'))
+    const root = this._modulesRoot || this._appRoot
+    const ace = require(path.join(root, '/node_modules/@adonisjs/ace'))
     commands.forEach((command) => ace.addCommand(command))
 
     this._callHooks('after', 'registerCommands')
@@ -513,7 +515,8 @@ class Ignitor {
   _invokeAce () {
     this._callHooks('before', 'aceCommand')
 
-    const ace = require(path.join(this._appRoot, '/node_modules/@adonisjs/ace'))
+    const root = this._modulesRoot || this._appRoot
+    const ace = require(path.join(root, '/node_modules/@adonisjs/ace'))
     ace.wireUpWithCommander()
 
     /**
@@ -656,6 +659,22 @@ class Ignitor {
    */
   appRoot (location) {
     this._appRoot = location
+    return this
+  }
+
+  /**
+   * Set application modules root. This path
+   * contains the node_modules directory with
+   * the application's dependencies.
+   *
+   * @method modulesRoot
+   *
+   * @param  {String} location
+   *
+   * @chainable
+   */
+  modulesRoot (location) {
+    this._modulesRoot = location
     return this
   }
 
