@@ -39,6 +39,12 @@ test.group('Ignitor', (group) => {
     assert.equal(ignitor._appRoot, 'foo')
   })
 
+  test('register modules root', (assert) => {
+    const ignitor = new Ignitor()
+    ignitor.modulesRoot('foo')
+    assert.equal(ignitor._modulesRoot, 'foo')
+  })
+
   test('default app file to start/app.js', (assert) => {
     const ignitor = new Ignitor()
     assert.equal(ignitor._appFile, 'start/app.js')
@@ -267,6 +273,13 @@ test.group('Ignitor', (group) => {
     } catch ({ message }) {
       assert.equal(message, `Cannot find module 'Adonis/Src/Command'`)
     }
+  })
+
+  test('fire ace when app and modules roots are different', async () => {
+    const ignitor = new Ignitor(fold)
+    ignitor.appRoot(__dirname)
+    ignitor.modulesRoot(path.join(__dirname, '..'))
+    await ignitor.fireAce()
   })
 
   test('setup resolver', async (assert) => {
