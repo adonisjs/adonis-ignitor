@@ -575,7 +575,7 @@ class Ignitor {
    * @private
    */
   _listenForUnhandledRejection () {
-    process.once('unhandledRejection', (response) => {
+    process.on('unhandledRejection', (response) => {
       try {
         this._fold.ioc.use('Adonis/Src/Logger').warning(WARNING_MESSAGE)
       } catch (error) {
