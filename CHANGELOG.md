@@ -1,3 +1,18 @@
+<a name="2.0.8"></a>
+## [2.0.8](https://github.com/adonisjs/adonis-ignitor/compare/v2.0.7...v2.0.8) (2018-10-01)
+
+
+### Bug Fixes
+
+* **ignitor:** correctly catch unhandledRejection ([7f326f8](https://github.com/adonisjs/adonis-ignitor/commit/7f326f8))
+
+
+### Features
+
+* **Ignitor:** allow to set modulesRoot ([#11](https://github.com/adonisjs/adonis-ignitor/issues/11)) ([e1dda89](https://github.com/adonisjs/adonis-ignitor/commit/e1dda89))
+
+
+
 <a name="2.0.7"></a>
 ## [2.0.7](https://github.com/adonisjs/adonis-ignitor/compare/v2.0.6...v2.0.7) (2018-07-17)
 
