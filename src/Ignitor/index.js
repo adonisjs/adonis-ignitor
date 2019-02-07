@@ -711,13 +711,14 @@ class Ignitor {
    * Sets up fire by performing following
    * operations in sequence.
    *
-   * 1. Register helpers.
-   * 2. Load hooks file ( if any ).
-   * 3. Register providers.
-   * 4. Boot providers.
-   * 5. Defined Aliases.
-   * 6. Load files to be preload.
-   * 7. Start http server.
+   * 1. Register autoloaded directories from package.json.
+   * 2. Register helpers.
+   * 3. Load hooks file ( if any ).
+   * 4. Register providers.
+   * 5. Boot providers.
+   * 6. Defined Aliases.
+   * 7. Register commands ( if asked ).
+   * 8. Load files to be preload.
    *
    * @method fire
    *
