@@ -239,6 +239,16 @@ test.group('Ignitor', (group) => {
     await ignitor.fireHttpServer()
   })
 
+  test('do not load http only files when firing ace', async (assert) => {
+    const ignitor = new Ignitor(fold)
+    ignitor.appRoot(path.join(__dirname, './'))
+    ignitor._preLoadOnHttpOnly = ['start/emitsError']
+    ignitor._startHttpServer = function () {}
+    ignitor._gracefullyShutDown = function () {}
+
+    await ignitor.fireAce()
+  })
+
   test('call preloading hooks', async (assert) => {
     const ignitor = new Ignitor(fold)
     const events = []

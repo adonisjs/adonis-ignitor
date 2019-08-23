@@ -49,6 +49,7 @@ class Ignitor {
     this._appRoot = null
     this._modulesRoot = null
     this._loadCommands = false
+    this.environment = null
 
     /**
      * Files to be preloaded
@@ -58,8 +59,16 @@ class Ignitor {
     this._preLoadFiles = [
       'start/routes',
       'start/events',
+      'start/kernel'
+    ]
+
+    /**
+     * Files to be preloaded only on Http
+     *
+     * @type {Array}
+     */
+    this._preLoadOnHttpOnly = [
       'start/socket',
-      'start/kernel',
       'start/wsKernel'
     ]
 
@@ -365,7 +374,11 @@ class Ignitor {
     debug('preloading files %j', this._preLoadFiles)
     debug('optional set %j', this._optionals)
 
-    this._preLoadFiles.forEach((file) => {
+    const isHttp = this.environment === 'http'
+    const isTesting = process.env.NODE_ENV === 'testing'
+    const filesToPreload = this._preLoadFiles.concat(isHttp || isTesting ? this._preLoadOnHttpOnly : [])
+
+    filesToPreload.forEach((file) => {
       const filePath = path.isAbsolute(file) ? file : path.join(this._appRoot, file)
 
       /**
@@ -807,6 +820,8 @@ class Ignitor {
    * @return {void}
    */
   async fireHttpServer (httpServerCallback) {
+    this.environment = 'http'
+
     try {
       await this.fire()
       await this._startHttpServer(httpServerCallback)
@@ -835,6 +850,11 @@ class Ignitor {
     if (process.argv.slice(2)[0] === 'test') {
       process.env.NODE_ENV = 'testing'
     }
+
+    /**
+     * Setting the environment
+     */
+    this.environment = 'ace'
 
     /**
      * Load database/factory.js file when loading
